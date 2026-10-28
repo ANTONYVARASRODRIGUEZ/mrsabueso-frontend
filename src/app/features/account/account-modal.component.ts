@@ -8,7 +8,7 @@ import { AppointmentsStore } from '../../core/state/appointments.store';
 import { PetsStore, speciesLabel } from '../../core/state/pets.store';
 import { ReviewsStore } from '../../core/state/reviews.store';
 import { UiStore } from '../../core/state/ui.store';
-import { formatDate, formatTime, todayIso } from '../../core/utils/date';
+import { formatDate, formatTime, formatTimeRange, todayIso } from '../../core/utils/date';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { ModalComponent } from '../../shared/ui/modal/modal.component';
 import { StarRatingComponent } from '../../shared/ui/star-rating/star-rating.component';
@@ -35,6 +35,7 @@ export class AccountModalComponent {
   protected readonly cancellingId = signal<string | null>(null);
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;
+  protected readonly fmtRange = formatTimeRange;
   protected readonly speciesLabel = speciesLabel;
   protected readonly total = computed(() => this.apptStore.mine().length);
 

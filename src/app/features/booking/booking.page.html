@@ -16,7 +16,7 @@
               <dt>Código</dt><dd>{{ a.code }}</dd>
               <dt>Mascota</dt><dd>{{ a.petName }}</dd>
               <dt>Servicio</dt><dd>{{ a.serviceName }}</dd>
-              <dt>Fecha</dt><dd>{{ fmtDate(a.date) }} · {{ fmtTime(a.time) }}</dd>
+              <dt>Fecha</dt><dd>{{ fmtDate(a.date) }} · {{ fmtRange(a.time, a.endTime) }}</dd>
               <dt>Estado</dt><dd>Pendiente de confirmación</dd>
             </dl>
             <div class="actions">

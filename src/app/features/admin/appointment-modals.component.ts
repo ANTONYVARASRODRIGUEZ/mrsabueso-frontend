@@ -8,7 +8,7 @@ import { PetsStore } from '../../core/state/pets.store';
 import { ReviewsStore } from '../../core/state/reviews.store';
 import { ServicesStore } from '../../core/state/services.store';
 import { SettingsStore } from '../../core/state/settings.store';
-import { addDays, formatDate, formatTime, toIsoDate, todayIso } from '../../core/utils/date';
+import { addDays, formatDate, formatTime, formatTimeRange, toIsoDate, todayIso } from '../../core/utils/date';
 import { nextOpenDate } from '../../core/utils/scheduling';
 import { ModalComponent } from '../../shared/ui/modal/modal.component';
 import { SlotPickerComponent } from '../../shared/ui/slot-picker/slot-picker.component';
@@ -92,6 +92,7 @@ import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.
     .dup { padding: 0.7rem 0.9rem; font-size: 0.9rem; color: var(--c-warn); background: var(--c-warn-bg); border-radius: var(--radius-sm); &__acts { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; margin-top: 0.5rem; } }
     .consent { align-items: flex-start; margin-top: 0.3rem; font-size: 0.88rem; input { margin-top: 0.2rem; } }
     .inline { display: grid; grid-template-columns: 1.2fr 0.8fr 1fr; gap: 0.5rem; } .linkbtn { justify-self: start; padding: 0; font-size: 0.85rem; font-weight: 600; color: var(--c-brand-600); background: none; border: 0; &:hover { text-decoration: underline; } }
+    .end__row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; .input { width: auto; } } .end__from { font-size: 0.9rem; color: var(--c-muted); }
     .foot { display: flex; justify-content: flex-end; gap: 0.7rem; margin-top: 0.8rem; } @media (max-width: 560px) { .inline { grid-template-columns: 1fr; } }
   `],
 })
@@ -177,11 +178,18 @@ export class AppointmentFormModalComponent {
           <dt>Cliente</dt><dd>{{ a.customerName }}@if (a.customerPhone) { <small>{{ a.customerPhone }}</small> }</dd>
           <dt>Mascota</dt><dd>{{ a.petName }}</dd>
           <dt>Servicio</dt><dd>{{ a.serviceName }}@if (a.price) { · S/ {{ a.price }} }</dd>
-          <dt>Fecha</dt><dd>{{ fmtDate(a.date) }} · {{ fmtTime(a.time) }}</dd>
+          <dt>Fecha</dt><dd>{{ fmtDate(a.date) }} · {{ fmtRange(a.time, a.endTime) }}</dd>
           <dt>Reprogramaciones</dt><dd>{{ a.rescheduleCount }}</dd>
           <dt>Creada</dt><dd>{{ fmtDate(a.createdAt.slice(0, 10)) }}</dd>
         </dl>
         @if (review(); as r) { <div class="rev"><app-star-rating [value]="r.rating" [readonly]="true" /><p>“{{ r.comment }}”</p></div> }
+        <div class="field end"><label for="d-end">Hora de fin</label>
+          <div class="end__row">
+            <span class="end__from">Inicio {{ fmtTime(a.time) }} →</span>
+            <input id="d-end" type="time" class="input" step="300" [min]="a.time" [ngModel]="endTime()" (ngModelChange)="endTime.set($event)">
+            <button type="button" class="btn btn--outline btn--sm" [disabled]="!endTime() || endTime() === a.endTime" (click)="saveEnd(a.id)">Guardar</button>
+          </div>
+          <span class="hint">Por defecto: inicio + duración del servicio. Ajústala si la atención tomó más o menos tiempo.</span></div>
         <div class="field"><label for="d-notes">Notas internas</label>
           <textarea id="d-notes" class="input" maxlength="300" [ngModel]="notes()" (ngModelChange)="notes.set($event)"></textarea></div>
         <div class="foot">
@@ -211,14 +219,23 @@ export class AppointmentDetailModalComponent {
   protected readonly appt = computed(() => this.appts.all().find((a) => a.id === this.appointmentId()) ?? null);
   protected readonly review = computed(() => this.reviews.forAppointment(this.appointmentId()));
   protected readonly notes = signal('');
+  protected readonly endTime = signal('');
+  protected readonly fmtRange = formatTimeRange;
 
   constructor() {
-    queueMicrotask(() => this.notes.set(this.appt()?.notes ?? ''));
+    queueMicrotask(() => { this.notes.set(this.appt()?.notes ?? ''); this.endTime.set(this.appt()?.endTime ?? ''); });
   }
 
   protected wa(phone: string, code: string): string {
     const base = this.settings.settings();
     return `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola, te escribimos de ${base.name} sobre tu cita ${code}.`)}`;
+  }
+
+  protected saveEnd(id: string): void {
+    this.appts.setEndTime(id, this.endTime()).subscribe({
+      next: () => this.toast.success('Hora de fin actualizada.'),
+      error: (e: Error) => this.toast.error(e.message),
+    });
   }
 
   protected saveNotes(id: string): void {

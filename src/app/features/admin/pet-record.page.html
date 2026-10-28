@@ -61,7 +61,7 @@
       <div class="adm-card__head"><h2>Citas de {{ p.name }}</h2></div>
       @if (visits().length === 0) { <p class="adm-empty">Sin citas registradas.</p> } @else {
         <ul class="adm-list">@for (a of visits(); track a.id) {
-          <li><span class="time">{{ fmtDate(a.date) }}</span><div class="grow"><strong>{{ a.serviceName }}</strong><small>{{ fmtTime(a.time) }} · {{ a.code }}</small></div><app-status-badge [status]="a.status" /></li>
+          <li><span class="time">{{ fmtDate(a.date) }}</span><div class="grow"><strong>{{ a.serviceName }}</strong><small>{{ fmtRange(a.time, a.endTime) }} · {{ a.code }}</small></div><app-status-badge [status]="a.status" /></li>
         }</ul>
       }
     </section>

@@ -56,6 +56,8 @@ export class AppointmentsStore {
   setPayment(id: string, payment: PaymentStatus): Observable<Appointment> { return this.save(this.db.req('PATCH', `/appointments/${id}/payment`, { payment })); }
   setNotes(id: string, notes: string): Observable<Appointment> { return this.save(this.db.req('PATCH', `/appointments/${id}/notes`, { notes })); }
 
+  setEndTime(id: string, endTime: string): Observable<Appointment> { return this.save(this.db.req('PATCH', `/appointments/${id}/end-time`, { endTime })); }
+
   markReminderSent(id: string): void { this.db.fire(this.save(this.db.req('POST', `/appointments/${id}/reminder`))); }
 
   /** Un horario puede elegirse si el día está abierto, no pasó y no está ocupado. */

@@ -10,7 +10,7 @@ import { AppointmentsStore } from '../../core/state/appointments.store';
 import { CustomersStore } from '../../core/state/customers.store';
 import { PetsStore, speciesLabel } from '../../core/state/pets.store';
 import { downloadCsv } from '../../core/utils/csv';
-import { formatDate, formatTime } from '../../core/utils/date';
+import { formatDate, formatTime, formatTimeRange } from '../../core/utils/date';
 import { noBlank, phoneValidator } from '../../core/validators/validators';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { ImportCustomersModalComponent } from './import-customers-modal.component';
@@ -90,7 +90,7 @@ import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.
         <h3>Últimas citas</h3>
         @if (selectedAppts().length === 0) { <p class="muted">Sin citas.</p> } @else {
           <ul class="adm-list">@for (a of selectedAppts(); track a.id) {
-            <li><span class="time">{{ fmtDate(a.date) }}</span><div class="grow"><strong>{{ a.serviceName }}</strong><small>{{ a.petName }} · {{ fmtTime(a.time) }}</small></div><app-status-badge [status]="a.status" /></li>
+            <li><span class="time">{{ fmtDate(a.date) }}</span><div class="grow"><strong>{{ a.serviceName }}</strong><small>{{ a.petName }} · {{ fmtRange(a.time, a.endTime) }}</small></div><app-status-badge [status]="a.status" /></li>
           }</ul>
         }
       </app-modal>
@@ -121,6 +121,7 @@ export class CustomersPage {
   protected readonly selectedId = signal<string | null>(null);
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;
+  protected readonly fmtRange = formatTimeRange;
   protected readonly speciesLabel = speciesLabel;
 
   protected readonly filtered = computed(() => {

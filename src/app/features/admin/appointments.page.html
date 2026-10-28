@@ -24,7 +24,7 @@
           @for (a of rows(); track a.id) {
             <tr>
               <td class="nowrap"><strong>{{ a.code }}</strong></td>
-              <td class="nowrap">{{ fmtDate(a.date) }}<small>{{ fmtTime(a.time) }}</small></td>
+              <td class="nowrap">{{ fmtDate(a.date) }}<small>{{ fmtRange(a.time, a.endTime) }}</small></td>
               <td>{{ a.customerName }}@if (a.customerPhone) { <small>{{ a.customerPhone }}</small> }</td>
               <td>{{ a.petName }}</td>
               <td>{{ a.serviceName }}</td>

@@ -6,7 +6,7 @@ import { CustomersStore } from '../../core/state/customers.store';
 import { MedicalStore, vaccineStatus } from '../../core/state/medical.store';
 import { PetsStore } from '../../core/state/pets.store';
 import { SettingsStore } from '../../core/state/settings.store';
-import { addDays, formatDate, formatTime, toIsoDate, todayIso } from '../../core/utils/date';
+import { addDays, formatDate, formatTime, formatTimeRange, toIsoDate, todayIso } from '../../core/utils/date';
 import { renderTemplate } from '../../core/utils/template';
 import { Appointment, Vaccination } from '../../core/models';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
@@ -30,7 +30,7 @@ const sentLabel = (iso?: string): string => (iso ? `Enviado el ${formatDate(iso.
         <label class="f inl">Mostrar<select class="input sel" [ngModel]="days()" (ngModelChange)="days.set(+$event)"><option [ngValue]="1">Hoy y mañana</option><option [ngValue]="3">Próximos 3 días</option><option [ngValue]="7">Próximos 7 días</option></select></label></div>
       @if (appts().length === 0) { <p class="adm-empty">No hay citas en ese período.</p> } @else {
         <ul class="adm-list">@for (a of appts(); track a.id) {
-          <li><span class="time">{{ fmtDate(a.date) }}<small>{{ fmtTime(a.time) }}</small></span>
+          <li><span class="time">{{ fmtDate(a.date) }}<small>{{ fmtRange(a.time, a.endTime) }}</small></span>
             <div class="grow"><strong>{{ a.customerName }}</strong> · {{ a.petName }}<small>{{ a.serviceName }}{{ a.customerPhone ? ' · ' + a.customerPhone : '' }}</small></div>
             @if (a.reminderSentAt) { <span class="badge badge--success">{{ sent(a.reminderSentAt) }}</span> }
             @if (a.customerPhone) {
@@ -70,6 +70,7 @@ export class RemindersPage {
   protected readonly hideDone = signal(false);
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;
+  protected readonly fmtRange = formatTimeRange;
   protected readonly sent = sentLabel;
 
   protected readonly appts = computed(() => {

@@ -74,6 +74,8 @@ export interface Appointment {
   date: string;
   /** HH:mm (24 h) */
   time: string;
+  /** HH:mm (24 h): inicio + duración del servicio; el administrador puede ajustarla. */
+  endTime?: string;
   status: AppointmentStatus;
   payment: PaymentStatus;
   notes?: string;

@@ -22,6 +22,14 @@ export function formatTime(time: string): string {
   return `${h % 12 === 0 ? 12 : h % 12}:${pad(m)} ${suffix}`;
 }
 
+/** "09:30", "11:00" → "9:30 – 11:00 a. m."; si cruza el mediodía muestra ambos sufijos. */
+export function formatTimeRange(start: string, end?: string): string {
+  if (!end) return formatTime(start);
+  const a = formatTime(start); const b = formatTime(end);
+  const sa = a.slice(-5); const sb = b.slice(-5);
+  return sa === sb ? `${a.slice(0, -6)} – ${b}` : `${a} – ${b}`;
+}
+
 /** "2026-09-28" → "28 sep 2026" */
 export function formatDate(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);

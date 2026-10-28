@@ -7,7 +7,7 @@ import { AppointmentsStore } from '../../core/state/appointments.store';
 import { ServicesStore } from '../../core/state/services.store';
 import { UiStore } from '../../core/state/ui.store';
 import { downloadCsv } from '../../core/utils/csv';
-import { formatDate, formatTime } from '../../core/utils/date';
+import { formatDate, formatTime, formatTimeRange } from '../../core/utils/date';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { AppointmentDetailModalComponent, AppointmentFormModalComponent } from './appointment-modals.component';
 
@@ -40,6 +40,7 @@ export class AdminAppointmentsPage {
   protected readonly statuses = Object.entries(STATUS_LABEL) as [AppointmentStatus, string][];
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;
+  protected readonly fmtRange = formatTimeRange;
 
   protected readonly filtered = computed(() => {
     const q = this.q().trim().toLowerCase();

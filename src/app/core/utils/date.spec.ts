@@ -1,4 +1,4 @@
-import { addDays, formatTime, toIsoDate, todayIso } from './date';
+import { addDays, formatTime, toIsoDate, todayIso, formatTimeRange } from './date';
 
 describe('date utils', () => {
   it('toIsoDate usa la fecha local con ceros a la izquierda', () => {
@@ -20,5 +20,18 @@ describe('date utils', () => {
     expect(formatTime('09:30')).toBe('9:30 a. m.');
     expect(formatTime('12:00')).toBe('12:00 p. m.');
     expect(formatTime('14:30')).toBe('2:30 p. m.');
+  });
+});
+
+describe('formatTimeRange', () => {
+  it('une el sufijo cuando ambas horas son de la mañana o de la tarde', () => {
+    expect(formatTimeRange('09:30', '11:00')).toBe('9:30 – 11:00 a. m.');
+    expect(formatTimeRange('14:30', '16:00')).toBe('2:30 – 4:00 p. m.');
+  });
+  it('muestra ambos sufijos si cruza el mediodía', () => {
+    expect(formatTimeRange('11:00', '12:30')).toBe('11:00 a. m. – 12:30 p. m.');
+  });
+  it('sin hora de fin muestra solo el inicio', () => {
+    expect(formatTimeRange('09:30')).toBe('9:30 a. m.');
   });
 });

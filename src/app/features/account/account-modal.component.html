@@ -42,7 +42,7 @@
             </div>
             <p class="meta">
               <span><app-icon name="paw" /> {{ a.petName }}</span>
-              <span><app-icon name="calendar" /> {{ fmtDate(a.date) }} · {{ fmtTime(a.time) }}</span>
+              <span><app-icon name="calendar" /> {{ fmtDate(a.date) }} · {{ fmtRange(a.time, a.endTime) }}</span>
             </p>
 
             @if (isUpcoming(a)) {

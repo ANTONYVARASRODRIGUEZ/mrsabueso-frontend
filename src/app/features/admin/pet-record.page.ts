@@ -9,7 +9,7 @@ import { AppointmentsStore } from '../../core/state/appointments.store';
 import { CustomersStore } from '../../core/state/customers.store';
 import { MedicalStore, vaccineStatus } from '../../core/state/medical.store';
 import { PetsStore, speciesLabel } from '../../core/state/pets.store';
-import { formatDate, formatTime, todayIso } from '../../core/utils/date';
+import { formatDate, formatTime, formatTimeRange, todayIso } from '../../core/utils/date';
 import { noBlank } from '../../core/validators/validators';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { ModalComponent } from '../../shared/ui/modal/modal.component';
@@ -65,6 +65,7 @@ export class PetRecordPage {
 
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;
+  protected readonly fmtRange = formatTimeRange;
   protected readonly age = ageLabel;
   protected readonly speciesLabel = speciesLabel;
   protected readonly kinds = Object.entries(KIND_LABEL) as [MedicalKind, string][];

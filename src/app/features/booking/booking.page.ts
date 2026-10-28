@@ -7,7 +7,7 @@ import { PetsStore, petLabel, speciesLabel } from '../../core/state/pets.store';
 import { ServicesStore } from '../../core/state/services.store';
 import { SettingsStore } from '../../core/state/settings.store';
 import { UiStore } from '../../core/state/ui.store';
-import { addDays, formatDate, formatTime, toIsoDate, todayIso } from '../../core/utils/date';
+import { addDays, formatDate, formatTime, formatTimeRange, toIsoDate, todayIso } from '../../core/utils/date';
 import { isIsoDate, nextOpenDate } from '../../core/utils/scheduling';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { SlotPickerComponent } from '../../shared/ui/slot-picker/slot-picker.component';
@@ -39,6 +39,7 @@ export class BookingPage {
   protected readonly maxDate = toIsoDate(addDays(new Date(), 90));
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;
+  protected readonly fmtRange = formatTimeRange;
   protected readonly speciesLabel = speciesLabel;
 
   protected readonly step = signal(1);

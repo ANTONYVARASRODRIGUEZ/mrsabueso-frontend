@@ -8,7 +8,7 @@ import { MedicalStore, vaccineStatus } from '../../core/state/medical.store';
 import { MessagesStore } from '../../core/state/messages.store';
 import { PetsStore } from '../../core/state/pets.store';
 import { ReviewsStore } from '../../core/state/reviews.store';
-import { addDays, formatDate, formatTime, toIsoDate, todayIso } from '../../core/utils/date';
+import { addDays, formatDate, formatTime, formatTimeRange, toIsoDate, todayIso } from '../../core/utils/date';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { StarRatingComponent } from '../../shared/ui/star-rating/star-rating.component';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
@@ -34,6 +34,7 @@ export class DashboardPage {
   protected readonly today = todayIso();
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;
+  protected readonly fmtRange = formatTimeRange;
   private readonly all = this.apptStore.all;
 
   protected readonly todayList = computed(() =>
