@@ -43,13 +43,13 @@
       <div class="or"><span>o</span></div>
       <app-google-button text="signin_with" (signedIn)="welcome($event)" (failed)="googleError($event)" (busy)="loading.set($event)" />
 
-      <div class="demo">
+      <!-- <div class="demo">
         <strong>Cuentas de prueba</strong><br>
         Cliente: <code>{{ demo.email }}</code> / <code>{{ demo.password }}</code><br>
         Administrador: <code>{{ admin.email }}</code> / <code>{{ admin.password }}</code><br>
         <button type="button" (click)="useDemo(false)">Usar cliente</button> ·
         <button type="button" (click)="useDemo(true)">Usar administrador</button>
-      </div>
+      </div> -->
 
       <p class="switch">¿Aún no tienes cuenta? <a routerLink="/registro" [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : null">Regístrate</a></p>
     </div>
