@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, catchError, forkJoin, map, of, throwError } from 'rxjs';
+import { Observable, catchError, forkJoin, map, of, retry, throwError, timer } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { DEFAULT_SETTINGS } from '../config/business';
 import {
@@ -52,7 +52,11 @@ export class ApiDb {
 
   /** Carga lo público y, según el rol, lo propio del cliente o todo el panel. */
   load(role: Role | null): void {
-    const get = <T>(path: string, fallback: T): Observable<T> => this.req<T>('GET', path).pipe(catchError(() => of(fallback)));
+    // Reintenta si el servidor está despertando o redesplegándose (Render gratis); no reintenta 401/403/404.
+    const get = <T>(path: string, fallback: T): Observable<T> => this.req<T>('GET', path).pipe(
+      retry({ count: 6, delay: (e: ApiError, i) => (e.status === 0 || e.status >= 500 ? timer(Math.min(2000 * i, 8000)) : throwError(() => e)) }),
+      catchError(() => of(fallback)),
+    );
     forkJoin({
       services: get<Service[]>('/services', []),
       settings: get<BusinessSettings>('/settings', DEFAULT_SETTINGS),
