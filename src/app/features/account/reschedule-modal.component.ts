@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Appointment } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 import { AppointmentsStore } from '../../core/state/appointments.store';
@@ -25,7 +26,7 @@ import { SlotPickerComponent } from '../../shared/ui/slot-picker/slot-picker.com
           <input id="rs-date" type="date" class="input" [min]="min" [max]="max" [ngModel]="date()" (ngModelChange)="date.set($event)">
         </div>
         <p class="label">Nuevo horario</p>
-        <app-slot-picker [date]="date()" [excludeId]="a.id" [(time)]="time" />
+        <app-slot-picker [date]="date()" [excludeId]="a.id" [duration]="durationOf(a)" [(time)]="time" />
         @if (!auth.isAdmin()) { <p class="note">Al reprogramar, tu cita volverá a quedar pendiente de confirmación.</p> }
         <button type="button" class="btn btn--primary btn--lg btn--block" [disabled]="!canSave() || saving()" (click)="save(a.id)">{{ saving() ? 'Guardando…' : 'Confirmar nuevo horario' }}</button>
       </app-modal>
@@ -45,6 +46,12 @@ export class RescheduleModalComponent {
   protected readonly date = signal(nextOpenDate(this.settings.settings(), toIsoDate(addDays(new Date(), 1))));
   protected readonly time = signal<string | null>(null);
   protected readonly saving = signal(false);
+  /** Duración actual de la cita (se conserva al reprogramar). */
+  protected durationOf(a: Appointment): number {
+    if (!a.endTime) return 0;
+    const m = (t: string): number => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+    return Math.max(0, m(a.endTime) - m(a.time));
+  }
   protected readonly canSave = computed(() => !!this.time() && this.date() >= this.min && this.date() <= this.max);
   protected readonly fmtDate = formatDate;
   protected readonly fmtTime = formatTime;

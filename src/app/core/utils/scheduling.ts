@@ -13,12 +13,19 @@ export function isOpenDay(settings: BusinessSettings, iso: string): boolean {
   return settings.hours.find((h) => h.day === dayOfWeek(iso))?.open ?? false;
 }
 
-/** Horarios de cita ofrecidos ese día (dentro del horario de atención). */
-export function slotsForDate(settings: BusinessSettings, iso: string): string[] {
+const toMin = (hhmm: string): number => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
+
+/**
+ * Horarios de cita ofrecidos ese día (dentro del horario de atención).
+ * Con `durationMin`, solo los que terminan a más tardar a la hora de cierre.
+ */
+export function slotsForDate(settings: BusinessSettings, iso: string, durationMin = 0): string[] {
   if (!isOpenDay(settings, iso)) return [];
   const h = settings.hours.find((x) => x.day === dayOfWeek(iso));
   if (!h) return [];
-  return [...settings.slots].filter((s) => s >= h.from && s < h.to).sort();
+  return [...settings.slots]
+    .filter((s) => s >= h.from && s < h.to && toMin(s) + durationMin <= toMin(h.to))
+    .sort();
 }
 
 /** Primer día abierto desde `fromIso` (inclusive), hasta 60 días; si no hay, devuelve `fromIso`. */

@@ -80,7 +80,7 @@
                 @if (!dateValid()) { <span class="error">Elige una fecha desde hoy y hasta 90 días.</span> }
               </div>
               <p class="label">Horarios disponibles</p>
-              <app-slot-picker [date]="date()" [(time)]="time" />
+              <app-slot-picker [date]="date()" [duration]="service()?.durationMin ?? 0" [(time)]="time" />
               <div class="field notes">
                 <label for="b-notes">Notas para la clínica <span class="hint">(opcional)</span></label>
                 <textarea id="b-notes" class="input" maxlength="300" placeholder="Ej. mi perrito se asusta con el secador" [ngModel]="notes()" (ngModelChange)="notes.set($event)"></textarea>

@@ -43,13 +43,15 @@ export class SlotPickerComponent {
   readonly date = input.required<string>();
   /** Cita que se está reprogramando (su horario actual no cuenta como ocupado). */
   readonly excludeId = input<string>();
+  /** Duración de la cita en minutos: oculta los horarios que terminarían después del cierre. */
+  readonly duration = input(0);
   readonly time = model<string | null>(null);
   protected readonly fmt = formatTime;
 
   protected readonly validDate = computed(() => isIsoDate(this.date()) && this.date() >= todayIso());
   protected readonly closed = computed(() => this.validDate() && !isOpenDay(this.settings.settings(), this.date()));
   protected readonly slots = computed(() =>
-    slotsForDate(this.settings.settings(), this.date()).map((t) => ({ time: t, busy: !this.appts.isSlotFree(this.date(), t, this.excludeId()) })));
+    slotsForDate(this.settings.settings(), this.date(), this.duration()).map((t) => ({ time: t, busy: !this.appts.isSlotFree(this.date(), t, this.excludeId(), this.duration()) })));
 
   constructor() {
     // Si el horario elegido deja de estar disponible (cambio de fecha), se limpia.

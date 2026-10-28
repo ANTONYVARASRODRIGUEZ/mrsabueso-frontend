@@ -76,7 +76,7 @@ import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.
         <div class="field"><label for="n-date">Fecha</label>
           <input id="n-date" type="date" class="input" [min]="min" [ngModel]="date()" (ngModelChange)="date.set($event)"></div>
 
-        <div class="field full"><span class="label">Horario</span><app-slot-picker [date]="date()" [(time)]="time" /></div>
+        <div class="field full"><span class="label">Horario</span><app-slot-picker [date]="date()" [duration]="duration()" [(time)]="time" /></div>
 
         <div class="field"><label for="n-st">Estado inicial</label>
           <select id="n-st" class="input" [ngModel]="status()" (ngModelChange)="status.set($event)"><option value="confirmed">Confirmada</option><option value="pending">Pendiente</option></select></div>
@@ -118,6 +118,7 @@ export class AppointmentFormModalComponent {
   protected readonly pSpecies = signal<PetSpecies>('dog');
   protected readonly pBreed = signal('');
   protected readonly serviceId = signal('');
+  protected readonly duration = computed(() => this.services.byId(this.serviceId())?.durationMin ?? 0);
   private readonly settings = inject(SettingsStore);
   protected readonly date = signal(nextOpenDate(this.settings.settings(), toIsoDate(addDays(new Date(), 1))));
   protected readonly time = signal<string | null>(null);

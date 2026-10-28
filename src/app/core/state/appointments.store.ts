@@ -60,9 +60,9 @@ export class AppointmentsStore {
 
   markReminderSent(id: string): void { this.db.fire(this.save(this.db.req('POST', `/appointments/${id}/reminder`))); }
 
-  /** Un horario puede elegirse si el día está abierto, no pasó y no está ocupado. */
-  isSlotFree(date: string, time: string, excludeId?: string): boolean {
-    return slotsForDate(this.settings.settings(), date).includes(time)
+  /** Un horario puede elegirse si el día está abierto, la cita termina antes del cierre, no pasó y no está ocupado. */
+  isSlotFree(date: string, time: string, excludeId?: string, durationMin = 0): boolean {
+    return slotsForDate(this.settings.settings(), date, durationMin).includes(time)
       && !(date === todayIso() && time <= nowHhmm())
       && !this.busyTimes(date, excludeId).has(time);
   }

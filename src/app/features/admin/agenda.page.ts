@@ -81,7 +81,9 @@ export class AgendaPage {
     const iso = toIsoDate(d);
     return { iso, name: DAY_NAMES[dayOfWeek(iso)].slice(0, 3), label: `${d.getDate()}/${d.getMonth() + 1}`, today: iso === todayIso(), open: isOpenDay(this.settings.settings(), iso), slots: slotsForDate(this.settings.settings(), iso) };
   }));
-  protected readonly times = computed(() => [...this.settings.settings().slots].sort());
+  /** Horas dentro del horario de atención de la semana, más las de citas ya agendadas fuera de él. */
+  protected readonly times = computed(() =>
+    [...new Set([...this.days().flatMap((d) => d.slots), ...this.weekAppts().map((a) => a.time)])].sort());
   private readonly weekAppts = computed(() => {
     const isos = new Set(this.days().map((d) => d.iso));
     return this.appts.all().filter((a) => isos.has(a.date) && a.status !== 'cancelled');
