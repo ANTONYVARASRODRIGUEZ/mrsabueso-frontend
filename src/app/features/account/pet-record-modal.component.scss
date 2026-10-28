@@ -1,0 +1,7 @@
+.sub { margin: -0.4rem 0 1rem; color: var(--c-muted); }
+h3 { display: flex; align-items: center; gap: 0.5rem; margin: 1.3rem 0 0.7rem; font-size: 1.05rem; app-icon { color: var(--c-brand); } }
+.scroll { overflow-x: auto; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 0.92rem; th { text-align: left; padding: 0.5rem 0.6rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-muted); border-bottom: 1px solid var(--c-line); } td { padding: 0.65rem 0.6rem; border-bottom: 1px solid var(--c-line); vertical-align: top; } small { display: block; color: var(--c-muted); } }
+.timeline { display: grid; gap: 0.9rem; padding-left: 0.4rem; li { display: flex; gap: 0.8rem; } .dot { flex-shrink: 0; width: 10px; height: 10px; margin-top: 0.45rem; background: var(--c-brand); border-radius: 50%; } .t { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; } .d { color: var(--c-ink-2); font-size: 0.93rem; } small { color: var(--c-muted); } }
+.empty { padding: 0.9rem; text-align: center; color: var(--c-muted); background: var(--c-bg); border-radius: var(--radius-sm); }
+.foot { margin-top: 1.4rem; font-size: 0.85rem; color: var(--c-muted); }

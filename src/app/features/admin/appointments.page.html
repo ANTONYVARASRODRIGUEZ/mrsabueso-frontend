@@ -1,0 +1,50 @@
+<header class="adm-head">
+  <div><h1>Citas</h1><p>{{ filtered().length }} resultados · Cobrado en la selección: S/ {{ total() }}</p></div>
+  <div class="actions">
+    <button type="button" class="btn btn--outline" (click)="exportCsv()"><app-icon name="download" /> Exportar CSV</button>
+    <button type="button" class="btn btn--primary" (click)="creating.set(true)"><app-icon name="plus" /> Nueva cita</button>
+  </div>
+</header>
+
+<section class="adm-card">
+  <div class="adm-filters">
+    <label class="f search">Buscar<app-icon name="search" /><input class="input" placeholder="Código, cliente, mascota o servicio" [ngModel]="q()" (ngModelChange)="setFilter(q, $event)"></label>
+    <label class="f">Estado<select class="input" [ngModel]="status()" (ngModelChange)="setFilter(status, $event)"><option value="all">Todos</option>@for (s of statuses; track s[0]) { <option [value]="s[0]">{{ s[1] }}</option> }</select></label>
+    <label class="f">Servicio<select class="input" [ngModel]="serviceId()" (ngModelChange)="setFilter(serviceId, $event)"><option value="all">Todos</option>@for (s of services(); track s.id) { <option [value]="s.id">{{ s.name }}</option> }</select></label>
+    <label class="f">Desde<input type="date" class="input" [ngModel]="from()" (ngModelChange)="setFilter(from, $event)"></label>
+    <label class="f">Hasta<input type="date" class="input" [ngModel]="to()" (ngModelChange)="setFilter(to, $event)"></label>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="clear()">Limpiar</button>
+  </div>
+
+  @if (rows().length === 0) { <p class="adm-empty">No hay citas con esos filtros.</p> } @else {
+    <div class="adm-table-wrap">
+      <table class="adm-table">
+        <thead><tr><th>Código</th><th>Fecha y hora</th><th>Cliente</th><th>Mascota</th><th>Servicio</th><th>Estado</th><th>Pago</th><th class="num">Monto</th><th></th></tr></thead>
+        <tbody>
+          @for (a of rows(); track a.id) {
+            <tr>
+              <td class="nowrap"><strong>{{ a.code }}</strong></td>
+              <td class="nowrap">{{ fmtDate(a.date) }}<small>{{ fmtTime(a.time) }}</small></td>
+              <td>{{ a.customerName }}@if (a.customerPhone) { <small>{{ a.customerPhone }}</small> }</td>
+              <td>{{ a.petName }}</td>
+              <td>{{ a.serviceName }}</td>
+              <td><select class="input sel" [ngModel]="a.status" (ngModelChange)="changeStatus(a, $event)" [attr.aria-label]="'Estado de ' + a.code">@for (s of statuses; track s[0]) { <option [value]="s[0]">{{ s[1] }}</option> }</select></td>
+              <td><select class="input sel" [ngModel]="a.payment" (ngModelChange)="changePayment(a, $event)" [attr.aria-label]="'Pago de ' + a.code"><option value="pending">Pendiente</option><option value="paid">Pagado</option></select></td>
+              <td class="num nowrap">{{ a.price ? 'S/ ' + a.price : '—' }}</td>
+              <td class="nowrap"><span class="row-actions">
+                @if (a.status === 'pending' || a.status === 'confirmed') { <button type="button" class="icon-btn" title="Reprogramar" (click)="ui.rescheduleTarget.set(a)" aria-label="Reprogramar"><app-icon name="refresh" /></button> }
+                <button type="button" class="icon-btn" title="Ver detalle" (click)="detailId.set(a.id)" aria-label="Ver detalle"><app-icon name="file" /></button>
+              </span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="adm-pager"><span>Página {{ page() > pages() ? pages() : page() }} de {{ pages() }}</span>
+      <span class="btns"><button type="button" class="btn btn--outline btn--sm" [disabled]="page() <= 1" (click)="page.set(page() - 1)">Anterior</button>
+        <button type="button" class="btn btn--outline btn--sm" [disabled]="page() >= pages()" (click)="page.set(page() + 1)">Siguiente</button></span></div>
+  }
+</section>
+
+@if (creating()) { <app-appointment-form-modal (closed)="creating.set(false)" /> }
+@if (detailId(); as id) { <app-appointment-detail-modal [appointmentId]="id" (closed)="detailId.set(null)" /> }

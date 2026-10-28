@@ -1,0 +1,37 @@
+<header class="header">
+  <div class="container bar">
+    <a routerLink="/" class="brand" aria-label="MR. SABUESO - Ir al inicio" (click)="close()"><app-logo /></a>
+
+    <button type="button" class="burger" (click)="toggle()" [attr.aria-expanded]="open()"
+            aria-controls="primary-nav" [attr.aria-label]="open() ? 'Cerrar menú' : 'Abrir menú'">
+      <app-icon [name]="open() ? 'x' : 'menu'" />
+    </button>
+
+    <div class="panel" id="primary-nav" [class.panel--open]="open()">
+      <nav class="nav" aria-label="Principal">
+        @for (l of links; track l.path) {
+          <a [routerLink]="l.path" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: l.exact }" (click)="close()">{{ l.label }}</a>
+        }
+      </nav>
+      <div class="actions">
+        @if (!auth.isLoggedIn()) {
+          <a routerLink="/iniciar-sesion" class="btn btn--ghost login" (click)="close()">Iniciar sesión</a>
+        } @else if (auth.isAdmin()) {
+          <a routerLink="/admin" class="btn btn--outline" (click)="close()"><app-icon name="settings" /> Panel admin</a>
+        } @else {
+          <button type="button" class="account" (click)="openAccount()" aria-haspopup="dialog">
+            <span class="avatar" aria-hidden="true"><app-icon name="user" /></span>
+            <span>{{ auth.displayName() }}</span>
+            <span class="pill">Mis citas</span>
+          </button>
+        }
+        <a routerLink="/reservar" class="btn btn--primary" (click)="close()">Reservar cita</a>
+        @if (auth.isLoggedIn()) {
+          <button type="button" class="logout" (click)="logout()" title="Cerrar sesión" aria-label="Cerrar sesión">
+            <app-icon name="logout" /><span class="logout__txt">Cerrar sesión</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</header>

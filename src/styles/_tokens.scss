@@ -1,0 +1,41 @@
+:root {
+  /* Marca */
+  --c-brand: #f26a21;
+  --c-brand-600: #d9560f;
+  --c-brand-100: #ffe4d1;
+  --c-brand-50: #fff5ed;
+  --c-teal: #0f766e;
+  --c-teal-50: #e6f4f2;
+
+  /* Neutros */
+  --c-ink: #1c2430;
+  --c-ink-2: #3f4a5a;
+  --c-muted: #667085;
+  --c-line: #e7e5e1;
+  --c-bg: #fbfaf8;
+  --c-surface: #ffffff;
+
+  /* Estados */
+  --c-success: #16794c;
+  --c-success-bg: #e3f6ec;
+  --c-info: #1d4ed8;
+  --c-info-bg: #e6eeff;
+  --c-warn: #8a5a00;
+  --c-warn-bg: #fff2cf;
+  --c-danger: #b42318;
+  --c-danger-bg: #fde8e6;
+
+  /* Tipografía */
+  --font-display: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Forma */
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --shadow-sm: 0 1px 2px rgba(28, 36, 48, 0.06);
+  --shadow: 0 8px 24px rgba(28, 36, 48, 0.08);
+  --shadow-lg: 0 24px 60px rgba(28, 36, 48, 0.18);
+
+  --header-h: 72px;
+}

@@ -1,0 +1,120 @@
+@if (pet(); as p) {
+  <a routerLink="/admin/mascotas" class="back no-print">← Volver a mascotas</a>
+
+  <section class="adm-card hero">
+    @if (p.photoUrl) { <img class="pic" [src]="p.photoUrl" [alt]="p.name" width="88" height="88"> } @else { <span class="pic ph"><app-icon name="paw" /></span> }
+    <div class="info">
+      <h1>{{ p.name }}</h1>
+      <p>{{ speciesLabel(p.species) }} · {{ p.breed }}@if (p.sex) { · {{ p.sex === 'male' ? 'Macho' : 'Hembra' }} }</p>
+      <dl>
+        <div><dt>Edad</dt><dd>{{ age(p.birthDate) }}</dd></div>
+        <div><dt>Último peso</dt><dd>{{ lastWeight() ? lastWeight() + ' kg' : '—' }}</dd></div>
+        <div><dt>Dueño</dt><dd>{{ owner()?.fullName ?? '—' }}@if (owner()?.phone) { <small>{{ owner()!.phone }}</small> }</dd></div>
+      </dl>
+      @if (p.notes) { <p class="notes"><app-icon name="alert" /> {{ p.notes }}</p> }
+    </div>
+    <div class="actions no-print">
+      <button type="button" class="btn btn--outline btn--sm" (click)="openPet()"><app-icon name="edit" /> Editar</button>
+      <button type="button" class="btn btn--outline btn--sm" (click)="print()"><app-icon name="file" /> Imprimir ficha</button>
+      <button type="button" class="btn btn--outline btn--sm danger" (click)="deletePet()"><app-icon name="trash" /> Eliminar</button>
+    </div>
+  </section>
+
+  <div class="tabs no-print" role="tablist">
+    <button type="button" role="tab" [class.on]="tab() === 'historial'" [attr.aria-selected]="tab() === 'historial'" (click)="tab.set('historial')">Historial clínico ({{ entries().length }})</button>
+    <button type="button" role="tab" [class.on]="tab() === 'vacunas'" [attr.aria-selected]="tab() === 'vacunas'" (click)="tab.set('vacunas')">Carnet de vacunación ({{ vaccines().length }})</button>
+    <button type="button" role="tab" [class.on]="tab() === 'citas'" [attr.aria-selected]="tab() === 'citas'" (click)="tab.set('citas')">Citas ({{ visits().length }})</button>
+  </div>
+
+  @if (tab() === 'historial') {
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Historial clínico</h2><button type="button" class="btn btn--primary btn--sm no-print" (click)="openEntry('new')"><app-icon name="plus" /> Nuevo registro</button></div>
+      @if (entries().length === 0) { <p class="adm-empty">Aún no hay registros clínicos.</p> } @else {
+        <ul class="timeline">@for (e of entries(); track e.id) {
+          <li><span class="dot"></span><div class="body">
+            <p class="t"><strong>{{ e.title }}</strong> <span class="badge badge--info">{{ kindLabel[e.kind] }}</span></p>
+            <p class="d">{{ e.description }}</p><small>{{ fmtDate(e.date) }} · {{ e.vet }}@if (e.weightKg) { · {{ e.weightKg }} kg }</small></div>
+            <span class="row-actions no-print"><button type="button" class="icon-btn" (click)="openEntry(e)" aria-label="Editar"><app-icon name="edit" /></button><button type="button" class="icon-btn danger" (click)="deleteEntry(e)" aria-label="Eliminar"><app-icon name="trash" /></button></span></li>
+        }</ul>
+      }
+    </section>
+  }
+
+  @if (tab() === 'vacunas') {
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Carnet de vacunación</h2><button type="button" class="btn btn--primary btn--sm no-print" (click)="openVaccine('new')"><app-icon name="plus" /> Registrar vacuna</button></div>
+      @if (vaccines().length === 0) { <p class="adm-empty">Aún no hay vacunas registradas.</p> } @else {
+        <div class="adm-table-wrap"><table class="adm-table">
+          <thead><tr><th>Vacuna</th><th>Aplicada</th><th>Próxima dosis</th><th>Lote</th><th>Veterinario</th><th>Estado</th><th class="no-print"></th></tr></thead>
+          <tbody>@for (v of vaccines(); track v.id) {
+            <tr><td><strong>{{ v.vaccine }}</strong>@if (v.notes) { <small>{{ v.notes }}</small> }</td><td class="nowrap">{{ fmtDate(v.date) }}</td><td class="nowrap">{{ v.nextDue ? fmtDate(v.nextDue) : '—' }}</td>
+              <td>{{ v.lot || '—' }}</td><td>{{ v.vet }}</td>
+              <td><span class="badge" [class]="'badge badge--' + statusTone[status(v)]">{{ statusLabel[status(v)] }}</span></td>
+              <td class="no-print"><span class="row-actions"><button type="button" class="icon-btn" (click)="openVaccine(v)" aria-label="Editar"><app-icon name="edit" /></button><button type="button" class="icon-btn danger" (click)="deleteVaccine(v)" aria-label="Eliminar"><app-icon name="trash" /></button></span></td></tr>
+          }</tbody></table></div>
+      }
+    </section>
+  }
+
+  @if (tab() === 'citas') {
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Citas de {{ p.name }}</h2></div>
+      @if (visits().length === 0) { <p class="adm-empty">Sin citas registradas.</p> } @else {
+        <ul class="adm-list">@for (a of visits(); track a.id) {
+          <li><span class="time">{{ fmtDate(a.date) }}</span><div class="grow"><strong>{{ a.serviceName }}</strong><small>{{ fmtTime(a.time) }} · {{ a.code }}</small></div><app-status-badge [status]="a.status" /></li>
+        }</ul>
+      }
+    </section>
+  }
+
+  @if (entryModal()) {
+    <app-modal [heading]="entryModal() === 'new' ? 'Nuevo registro clínico' : 'Editar registro'" width="560px" (closed)="entryModal.set(null)">
+      <form [formGroup]="entryForm" (ngSubmit)="saveEntry()" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="e-date">Fecha</label><input id="e-date" type="date" class="input" formControlName="date" [max]="today"></div>
+          <div class="field"><label for="e-kind">Tipo</label><select id="e-kind" class="input" formControlName="kind">@for (k of kinds; track k[0]) { <option [value]="k[0]">{{ k[1] }}</option> }</select></div>
+          <div class="field full"><label for="e-title">Título</label><input id="e-title" class="input" formControlName="title" placeholder="Ej. Control general" [class.is-invalid]="entryForm.controls.title.touched && entryForm.controls.title.invalid"></div>
+          <div class="field full"><label for="e-desc">Descripción</label><textarea id="e-desc" class="input" formControlName="description" placeholder="Diagnóstico, tratamiento, indicaciones…" [class.is-invalid]="entryForm.controls.description.touched && entryForm.controls.description.invalid"></textarea></div>
+          <div class="field"><label for="e-vet">Veterinario</label><input id="e-vet" class="input" formControlName="vet"></div>
+          <div class="field"><label for="e-w">Peso (kg) <span class="hint">(opcional)</span></label><input id="e-w" type="number" step="0.1" min="0" class="input" formControlName="weightKg"></div>
+        </div>
+        <div class="foot"><button type="button" class="btn btn--outline" (click)="entryModal.set(null)">Cancelar</button><button type="submit" class="btn btn--primary">Guardar</button></div>
+      </form>
+    </app-modal>
+  }
+
+  @if (vaccineModal()) {
+    <app-modal [heading]="vaccineModal() === 'new' ? 'Registrar vacuna' : 'Editar vacuna'" width="560px" (closed)="vaccineModal.set(null)">
+      <form [formGroup]="vaccineForm" (ngSubmit)="saveVaccine()" novalidate>
+        <div class="form-grid">
+          <div class="field full"><label for="v-name">Vacuna</label><input id="v-name" class="input" formControlName="vaccine" list="vaccine-list" placeholder="Ej. Antirrábica" [class.is-invalid]="vaccineForm.controls.vaccine.touched && vaccineForm.controls.vaccine.invalid">
+            <datalist id="vaccine-list">@for (s of suggested; track s) { <option [value]="s"></option> }</datalist></div>
+          <div class="field"><label for="v-date">Fecha de aplicación</label><input id="v-date" type="date" class="input" formControlName="date" [max]="today"></div>
+          <div class="field"><label for="v-next">Próxima dosis <span class="hint">(opcional)</span></label><input id="v-next" type="date" class="input" formControlName="nextDue"></div>
+          <div class="field"><label for="v-lot">Lote <span class="hint">(opcional)</span></label><input id="v-lot" class="input" formControlName="lot"></div>
+          <div class="field"><label for="v-vet">Veterinario</label><input id="v-vet" class="input" formControlName="vet"></div>
+          <div class="field full"><label for="v-notes">Notas <span class="hint">(opcional)</span></label><input id="v-notes" class="input" formControlName="notes"></div>
+        </div>
+        <div class="foot"><button type="button" class="btn btn--outline" (click)="vaccineModal.set(null)">Cancelar</button><button type="submit" class="btn btn--primary">Guardar</button></div>
+      </form>
+    </app-modal>
+  }
+
+  @if (petModal()) {
+    <app-modal heading="Editar datos de la mascota" width="520px" (closed)="petModal.set(false)">
+      <form [formGroup]="petForm" (ngSubmit)="savePet()" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="p-name">Nombre</label><input id="p-name" class="input" formControlName="name" [class.is-invalid]="petForm.controls.name.touched && petForm.controls.name.invalid"></div>
+          <div class="field"><label for="p-sp">Especie</label><select id="p-sp" class="input" formControlName="species"><option value="dog">Perro</option><option value="cat">Gato</option><option value="other">Otro</option></select></div>
+          <div class="field"><label for="p-br">Raza</label><input id="p-br" class="input" formControlName="breed"></div>
+          <div class="field"><label for="p-sx">Sexo</label><select id="p-sx" class="input" formControlName="sex"><option value="">Sin indicar</option><option value="male">Macho</option><option value="female">Hembra</option></select></div>
+          <div class="field full"><label for="p-bd">Fecha de nacimiento</label><input id="p-bd" type="date" class="input" formControlName="birthDate" [max]="today"></div>
+          <div class="field full"><label for="p-nt">Alergias o condiciones médicas</label><textarea id="p-nt" class="input" formControlName="notes"></textarea></div>
+        </div>
+        <div class="foot"><button type="button" class="btn btn--outline" (click)="petModal.set(false)">Cancelar</button><button type="submit" class="btn btn--primary">Guardar</button></div>
+      </form>
+    </app-modal>
+  }
+} @else {
+  <section class="adm-card"><p class="adm-empty">No encontramos esta mascota. <a routerLink="/admin/mascotas" class="linkbtn">Volver al listado</a></p></section>
+}

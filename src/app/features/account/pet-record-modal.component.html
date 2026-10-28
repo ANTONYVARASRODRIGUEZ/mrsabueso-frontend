@@ -1,0 +1,30 @@
+<app-modal [heading]="'Historial de ' + (pet()?.name ?? '')" width="680px" (closed)="close()">
+  @if (pet(); as p) {
+    <p class="sub">{{ speciesLabel(p.species) }} · {{ p.breed }}@if (p.birthDate) { · Nació el {{ fmt(p.birthDate) }} }</p>
+
+    <h3><app-icon name="syringe" /> Carnet de vacunación</h3>
+    @if (vaccines().length === 0) { <p class="empty">Aún no hay vacunas registradas.</p> } @else {
+      <div class="scroll"><table class="tbl">
+        <thead><tr><th>Vacuna</th><th>Aplicada</th><th>Próxima dosis</th><th>Estado</th></tr></thead>
+        <tbody>@for (v of vaccines(); track v.id) {
+          <tr><td><strong>{{ v.vaccine }}</strong>@if (v.lot) { <small>Lote {{ v.lot }}</small> }</td><td>{{ fmt(v.date) }}</td>
+            <td>{{ v.nextDue ? fmt(v.nextDue) : '—' }}</td>
+            <td><span class="badge" [class]="'badge badge--' + statusTone[status(v)]">{{ statusLabel[status(v)] }}</span></td></tr>
+        }</tbody>
+      </table></div>
+    }
+
+    <h3><app-icon name="stethoscope" /> Historial clínico</h3>
+    @if (entries().length === 0) { <p class="empty">Aún no hay registros clínicos.</p> } @else {
+      <ul class="timeline">
+        @for (e of entries(); track e.id) {
+          <li><span class="dot"></span>
+            <div><p class="t"><strong>{{ e.title }}</strong> <span class="badge badge--info">{{ kind[e.kind] }}</span></p>
+              <p class="d">{{ e.description }}</p>
+              <small>{{ fmt(e.date) }} · {{ e.vet }}@if (e.weightKg) { · {{ e.weightKg }} kg }</small></div></li>
+        }
+      </ul>
+    }
+    <p class="foot">Esta información la registra nuestro equipo veterinario en cada visita.</p>
+  }
+</app-modal>

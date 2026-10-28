@@ -1,0 +1,30 @@
+<footer class="footer">
+  <div class="container grid">
+    <div class="about">
+      <app-logo [light]="true" />
+      <p>El lugar consentido de tus peluditos. Atención médica, spa y pet shop en un solo lugar.</p>
+    </div>
+
+    <nav aria-label="Secciones">
+      <h3>Explora</h3>
+      <a routerLink="/servicios">Servicios</a>
+      <a routerLink="/nosotros">Nosotros</a>
+      <a routerLink="/reservar">Reservar cita</a>
+      <a routerLink="/contacto">Contacto</a>
+    </nav>
+
+    <div class="hours">
+      <h3>Horario de atención</h3>
+      @for (d of schedule(); track d.day) { <p class="row" [class.closed]="!d.open"><span>{{ d.day }}</span><span>{{ d.text }}</span></p> }
+    </div>
+
+    <div class="contact">
+      <h3>Contáctanos</h3>
+      <a [href]="wa()" target="_blank" rel="noopener"><app-icon name="whatsapp" /> {{ s().phone }}</a>
+      @if (s().email) { <a [href]="'mailto:' + s().email"><app-icon name="mail" /> {{ s().email }}</a> }
+      <a [href]="maps()" target="_blank" rel="noopener"><app-icon name="pin" /> {{ s().address || 'Ver ubicación' }}</a>
+      <span><app-icon name="facebook" /> {{ s().facebook }}</span>
+    </div>
+  </div>
+  <div class="container legal">© {{ year }} {{ s().name }} · {{ s().tagline }}. Todos los derechos reservados.</div>
+</footer>

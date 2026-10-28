@@ -1,0 +1,45 @@
+.header {
+  position: sticky; top: 0; z-index: 50; height: var(--header-h);
+  background: color-mix(in srgb, var(--c-bg) 88%, transparent); backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--c-line);
+}
+.bar { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.panel { display: flex; align-items: center; gap: 2rem; }
+.nav { display: flex; gap: 0.3rem; }
+.nav a {
+  padding: 0.5rem 0.9rem; font-weight: 500; font-size: 0.95rem; color: var(--c-ink-2); border-radius: 999px;
+  transition: background 0.15s, color 0.15s;
+  &:hover { background: var(--c-brand-50); color: var(--c-ink); }
+  &.is-active { color: var(--c-brand-600); background: var(--c-brand-50); }
+}
+.actions { display: flex; align-items: center; gap: 0.8rem; }
+.account {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.8rem 0.3rem 0.3rem;
+  background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 999px; font-size: 0.9rem; font-weight: 500;
+  &:hover { border-color: var(--c-ink-2); }
+}
+.avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--c-brand-100); color: var(--c-brand-600); --icon-size: 17px; }
+.pill { padding: 0.05rem 0.55rem; font-size: 0.72rem; font-weight: 600; color: var(--c-brand-600); background: var(--c-brand-50); border-radius: 999px; }
+.logout {
+  display: grid; place-items: center; width: 42px; height: 42px; color: var(--c-ink-2);
+  background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 999px; --icon-size: 18px;
+  &:hover { color: var(--c-danger); border-color: var(--c-danger); }
+  &__txt { display: none; }
+}
+.burger { display: none; place-items: center; width: 44px; height: 44px; background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 12px; }
+
+@media (max-width: 920px) {
+  .burger { display: grid; }
+  .panel {
+    display: none; position: absolute; top: var(--header-h); left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 1rem; padding: 1rem 1.25rem 1.5rem;
+    background: var(--c-bg); border-bottom: 1px solid var(--c-line); box-shadow: var(--shadow);
+    &--open { display: flex; }
+  }
+  .nav { flex-direction: column; }
+  .nav a { padding: 0.75rem 1rem; }
+  .logout { display: flex; gap: 0.5rem; width: 100%; height: auto; padding: 0.6rem; font-weight: 500; &__txt { display: inline; } }
+  .actions { flex-direction: column; align-items: stretch; .account { justify-content: center; padding: 0.6rem; } .btn { width: 100%; } }
+}
+
+.login { padding-inline: 1rem; }

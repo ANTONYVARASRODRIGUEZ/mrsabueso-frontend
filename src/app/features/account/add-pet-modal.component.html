@@ -1,0 +1,50 @@
+<app-modal heading="Agregar nueva mascota" width="480px" (closed)="close()">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="field">
+      <label for="pet-name">Nombre de tu mascota</label>
+      <input id="pet-name" class="input" formControlName="name" placeholder="Ej. Boby" maxlength="40"
+             [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid">
+      @if (form.controls.name.touched && form.controls.name.invalid) { <span class="error">Ingresa el nombre de tu mascota.</span> }
+    </div>
+
+    <fieldset class="field">
+      <legend class="label">Tipo de mascota</legend>
+      <div class="seg">
+        @for (s of species; track s.value) {
+          <label [class.on]="form.controls.species.value === s.value">
+            <input type="radio" formControlName="species" [value]="s.value" class="sr-only"> {{ s.label }}
+          </label>
+        }
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label for="pet-breed">Raza</label>
+      <input id="pet-breed" class="input" formControlName="breed" placeholder="Ej. Beagle" maxlength="40">
+    </div>
+
+    <div class="two">
+      <div class="field"><label for="pet-sex">Sexo <span class="hint">(opcional)</span></label>
+        <select id="pet-sex" class="input" formControlName="sex"><option value="">Sin indicar</option><option value="male">Macho</option><option value="female">Hembra</option></select></div>
+      <div class="field"><label for="pet-birth">Fecha de nacimiento <span class="hint">(opcional)</span></label>
+        <input id="pet-birth" type="date" class="input" formControlName="birthDate" [max]="today"></div>
+    </div>
+
+    <div class="field">
+      <span class="label">Foto de tu mascota <span class="hint">(opcional)</span></span>
+      <label class="upload" for="pet-photo">
+        @if (photo(); as src) { <img [src]="src" alt="Vista previa de la mascota"> }
+        @else { <app-icon name="camera" /><span>Toca para subir foto</span> }
+      </label>
+      <input id="pet-photo" type="file" accept="image/*" class="sr-only" (change)="onPhoto($event)">
+      @if (photoError()) { <span class="error">{{ photoError() }}</span> }
+    </div>
+
+    <div class="field">
+      <label for="pet-notes">Alergias o condiciones médicas <span class="hint">(opcional)</span></label>
+      <textarea id="pet-notes" class="input" formControlName="notes" maxlength="300" placeholder="Ej. alergia a cierto alimento, enfermedad previa, etc."></textarea>
+    </div>
+
+    <button type="submit" class="btn btn--primary btn--lg btn--block" [disabled]="saving()">{{ saving() ? 'Guardando…' : 'Guardar mascota' }}</button>
+  </form>
+</app-modal>

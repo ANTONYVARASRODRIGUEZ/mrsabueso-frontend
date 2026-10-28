@@ -1,0 +1,7 @@
+fieldset { border: 0; padding: 0; margin: 0 0 1.1rem; min-width: 0; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1.5px solid var(--c-line); border-radius: var(--radius-sm); overflow: hidden;
+  label { padding: 0.6rem; text-align: center; font-weight: 500; cursor: pointer; border-right: 1.5px solid var(--c-line); &:last-child { border-right: 0; } &:hover { background: var(--c-brand-50); } &.on { background: var(--c-brand); color: #fff; } &:focus-within { outline: 3px solid var(--c-brand-100); outline-offset: -3px; } } }
+.upload { display: grid; place-items: center; align-content: center; gap: 0.2rem; width: 120px; height: 120px; padding: 0.5rem; text-align: center; font-size: 0.85rem; color: var(--c-muted); background: var(--c-bg); border: 2px dashed #cfccc6; border-radius: var(--radius); cursor: pointer; overflow: hidden; --icon-size: 28px;
+  &:hover { border-color: var(--c-brand); color: var(--c-brand-600); } img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; } }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 0.9rem; }
+@media (max-width: 480px) { .two { grid-template-columns: 1fr; } }

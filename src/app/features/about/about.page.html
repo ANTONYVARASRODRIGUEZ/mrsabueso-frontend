@@ -1,0 +1,28 @@
+<section class="section">
+  <div class="container about">
+    <app-photo class="about__img" src="images/about/team.jpg" alt="Veterinaria de MR. SABUESO con un perro golden retriever" ratio="1 / 1" [eager]="true" />
+    <div>
+      <span class="eyebrow">Conócenos</span>
+      <h1>En <span class="accent">MR. SABUESO</span> tu mascota es parte de nuestra <span class="accent">familia</span></h1>
+      <p class="lead">Somos una clínica veterinaria y centro de spa integral pensado para ofrecer momentos de relajación, cuidado de belleza impecable y atención médica preventiva con los estándares más altos.</p>
+
+      <figure class="quote card">
+        <app-icon name="heart" />
+        <blockquote>“Estamos muy agradecidos con todo el equipo de MR. SABUESO. Siempre tratan a mi perrito con mucho cariño y profesionalismo. ¡Totalmente recomendados!”</blockquote>
+        <figcaption>— Valeria Torres, cliente</figcaption>
+      </figure>
+
+      <a routerLink="/contacto" class="btn btn--primary btn--lg">Conoce al equipo <app-icon name="arrow-right" /></a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="container">
+    <ul class="values">
+      @for (v of values; track v.title) {
+        <li class="card"><span class="icon"><app-icon [name]="v.icon" /></span><h3>{{ v.title }}</h3><p>{{ v.text }}</p></li>
+      }
+    </ul>
+  </div>
+</section>

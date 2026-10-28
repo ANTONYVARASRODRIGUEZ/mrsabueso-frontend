@@ -1,0 +1,11 @@
+.footer { margin-top: 2rem; padding-top: 3.5rem; background: #1c2430; color: rgba(255, 255, 255, 0.78); }
+.grid { display: grid; grid-template-columns: 1.4fr 0.8fr 1.1fr 1.3fr; gap: 2.5rem; padding-bottom: 2.5rem; }
+.about p { margin-top: 1rem; max-width: 30ch; font-size: 0.95rem; }
+h3 { margin-bottom: 0.9rem; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; }
+nav, .contact { display: grid; align-content: start; gap: 0.55rem; }
+.hours .row { white-space: nowrap; display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; margin-bottom: 0.3rem; &.closed { color: rgba(255,255,255,0.45); } }
+a, span { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; }
+a:hover { color: #fff; }
+.legal { padding-block: 1.2rem; border-top: 1px solid rgba(255, 255, 255, 0.12); font-size: 0.85rem; color: rgba(255, 255, 255, 0.55); }
+@media (max-width: 960px) { .grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; gap: 2rem; } }

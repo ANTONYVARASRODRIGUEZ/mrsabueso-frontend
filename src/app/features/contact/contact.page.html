@@ -1,0 +1,53 @@
+<section class="section">
+  <div class="container">
+    <header class="head">
+      <span class="eyebrow">Escríbenos o visítanos</span>
+      <h1>Contacto MR. SABUESO</h1>
+      <p class="lead">Estamos listos para atender a tu mascota con la mejor disposición y cariño.</p>
+    </header>
+
+    <div class="grid">
+      <div class="info">
+        <article class="card tile"><span class="icon"><app-icon name="pin" /></span>
+          <div><h2>Nuestra veterinaria</h2><p>{{ s().address || 'Visítanos en nuestra sede principal de Veterinaria y Spa.' }}</p>
+            <a class="link" [href]="maps()" target="_blank" rel="noopener">Ver en mapas →</a></div></article>
+
+        <article class="wa">
+          <span class="wa__icon"><app-icon name="whatsapp" /></span>
+          <div><h2>WhatsApp y celular</h2><p>Línea directa: <strong>{{ s().phone }}</strong></p>
+            <a class="btn btn--whatsapp btn--lg" [href]="wa()" target="_blank" rel="noopener">Iniciar chat directo</a></div>
+        </article>
+
+        <article class="card tile hours"><span class="icon"><app-icon name="clock" /></span>
+          <div><h2>Horario de atención</h2>
+            @for (d of schedule(); track d.day) { <p class="hrow" [class.closed]="!d.open"><span>{{ d.day }}</span><span>{{ d.text }}</span></p> }</div></article>
+
+        <article class="card tile"><span class="icon"><app-icon name="facebook" /></span>
+          <div><h2>Redes sociales</h2><p>{{ s().facebook }}</p></div></article>
+      </div>
+
+      <form class="card form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <h2>Envíanos un mensaje</h2>
+        <p class="hint">O si prefieres, escríbenos directo por WhatsApp.</p>
+
+        <div class="row">
+          <div class="field"><label for="c-name">Nombre completo</label>
+            <input id="c-name" class="input" formControlName="fullName" placeholder="Tu nombre" autocomplete="name" [class.is-invalid]="invalid('fullName')">
+            @if (invalid('fullName')) { <span class="error">Ingresa tu nombre.</span> }</div>
+          <div class="field"><label for="c-phone">Teléfono / WhatsApp</label>
+            <input id="c-phone" type="tel" class="input" formControlName="phone" placeholder="Tu número" autocomplete="tel" [class.is-invalid]="invalid('phone')">
+            @if (invalid('phone')) { <span class="error">Ingresa un número válido.</span> }</div>
+        </div>
+
+        <div class="field"><label for="c-service">Servicio de interés</label>
+          <select id="c-service" class="input" formControlName="serviceId">@for (sv of services(); track sv.id) { <option [value]="sv.id">{{ sv.name }}</option> }</select></div>
+
+        <div class="field"><label for="c-msg">Mensaje</label>
+          <textarea id="c-msg" class="input" formControlName="message" placeholder="Cuéntanos detalles sobre tu mascota…" [class.is-invalid]="invalid('message')"></textarea>
+          @if (invalid('message')) { <span class="error">Escribe un mensaje de al menos 10 caracteres.</span> }</div>
+
+        <button type="submit" class="btn btn--primary btn--lg btn--block" [disabled]="sending()">{{ sending() ? 'Enviando…' : 'Enviar consulta' }}</button>
+      </form>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,76 @@
+<div class="auth">
+  <aside class="aside">
+    <app-photo src="images/auth/register.jpg" alt="" ratio="auto" [eager]="true" />
+    <div class="copy">
+      <h2>Crea tu cuenta y consiente a tu mascota</h2>
+      <p>Todo lo que necesitas para cuidar su salud y bienestar.</p>
+      <ul>
+        @for (p of perks; track p) { <li><app-icon name="check" /> {{ p }}</li> }
+      </ul>
+    </div>
+  </aside>
+
+  <section class="main">
+    <div class="box">
+      <h1>Crear cuenta</h1>
+      <p class="sub">Regístrate gratis para reservar tus citas en línea.</p>
+
+      @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="fullName">Nombre completo</label>
+          <input id="fullName" class="input" formControlName="fullName" autocomplete="name" placeholder="Ej. Anali Rojas" [class.is-invalid]="invalid('fullName')">
+          @if (invalid('fullName')) { <span class="error">Ingresa tu nombre completo (mín. 3 caracteres).</span> }
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="email">Correo electrónico</label>
+            <input id="email" type="email" class="input" formControlName="email" autocomplete="email" placeholder="tucorreo@ejemplo.com" [class.is-invalid]="invalid('email')">
+            @if (invalid('email')) { <span class="error">Ingresa un correo válido.</span> }
+          </div>
+          <div class="field">
+            <label for="phone">Teléfono / WhatsApp <span class="hint">(opcional)</span></label>
+            <input id="phone" type="tel" class="input" formControlName="phone" autocomplete="tel" placeholder="+51 999 999 999" [class.is-invalid]="invalid('phone')">
+            @if (invalid('phone')) { <span class="error">Número no válido.</span> }
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="pw">
+            <input id="password" class="input" formControlName="password" autocomplete="new-password"
+                   [type]="showPassword() ? 'text' : 'password'" [class.is-invalid]="invalid('password')">
+            <button type="button" class="toggle" (click)="showPassword.set(!showPassword())" [attr.aria-pressed]="showPassword()">{{ showPassword() ? 'Ocultar' : 'Mostrar' }}</button>
+          </div>
+          <span class="hint" [class.error]="invalid('password')">Mínimo 8 caracteres, con letras y números.</span>
+        </div>
+
+        <div class="field">
+          <label for="confirm">Confirmar contraseña</label>
+          <input id="confirm" class="input" formControlName="confirm" autocomplete="new-password"
+                 [type]="showPassword() ? 'text' : 'password'"
+                 [class.is-invalid]="form.controls.confirm.touched && (form.controls.confirm.invalid || form.hasError('mismatch'))">
+          @if (form.controls.confirm.touched && form.hasError('mismatch')) { <span class="error">Las contraseñas no coinciden.</span> }
+        </div>
+
+        <label class="check">
+          <input type="checkbox" formControlName="terms">
+          <span>Acepto los términos de uso y el tratamiento de mis datos para gestionar mis citas.</span>
+        </label>
+        @if (form.controls.terms.touched && form.controls.terms.invalid) { <p class="error" style="margin-top:-0.6rem;margin-bottom:1rem">Debes aceptar para continuar.</p> }
+
+        <button type="submit" class="btn btn--primary btn--lg btn--block" [disabled]="loading()">
+          {{ loading() ? 'Creando cuenta…' : 'Crear cuenta' }}
+        </button>
+      </form>
+
+      <div class="or"><span>o</span></div>
+      <app-google-button text="signup_with" (signedIn)="welcome($event)" (failed)="googleError($event)" (busy)="loading.set($event)" />
+      <p class="g-legal">Al continuar con Google aceptas el tratamiento de tus datos personales para gestionar tus citas.</p>
+
+      <p class="switch">¿Ya tienes cuenta? <a routerLink="/iniciar-sesion" [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : null">Inicia sesión</a></p>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,12 @@
+<div class="backdrop" (mousedown)="onBackdrop($event)" (keydown)="onKeydown($event)">
+  <div #panel class="panel" role="dialog" aria-modal="true" tabindex="-1"
+       [attr.aria-labelledby]="titleId" [style.max-width]="width()">
+    <header class="head">
+      <h2 [id]="titleId">{{ heading() }}</h2>
+      <button type="button" class="close" (click)="closed.emit()" aria-label="Cerrar">
+        <app-icon name="x" />
+      </button>
+    </header>
+    <div class="body"><ng-content /></div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <span class="chip"><app-icon name="heart" /> El lugar consentido de tus peluditos</span>
+      <h1>Cuidado, amor y salud en <span class="accent">MR. SABUESO</span></h1>
+      <p class="lead">Atención médica veterinaria experta, baño y corte profesional, spa para consentirlos y el mejor pet shop para su felicidad diaria.</p>
+      <div class="cta">
+        <a routerLink="/reservar" class="btn btn--primary btn--lg">Agendar cita <app-icon name="arrow-right" /></a>
+        <a routerLink="/servicios" class="btn btn--outline btn--lg">Ver experiencia spa</a>
+      </div>
+      <a class="remind" [href]="wa" target="_blank" rel="noopener"><app-icon name="whatsapp" /> Recibe recordatorios de tus citas por WhatsApp</a>
+    </div>
+
+    <div class="hero__media">
+      <app-photo src="images/hero/hero.jpg" alt="Perro feliz después de su baño en MR. SABUESO" ratio="5 / 6" [eager]="true" />
+      <div class="float float--a"><app-icon name="shield" /><div><strong>Atención experta</strong><small>Médicos veterinarios</small></div></div>
+      <div class="float float--b"><app-icon name="calendar" /><div><strong>Reserva en línea</strong><small>En menos de 1 minuto</small></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="head"><span class="eyebrow">Nuestros servicios</span><h2>Todo para su bienestar</h2></div>
+    <ul class="cards">
+      @for (s of services(); track s.id) {
+        <li><a class="svc card" routerLink="/servicios" [fragment]="s.id">
+          <span class="icon"><app-icon [name]="s.icon" /></span>
+          <h3>{{ s.name }}</h3><p>{{ s.summary }}</p>
+          <span class="more">Ver detalle <app-icon name="arrow-right" /></span>
+        </a></li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="container">
+    <div class="head"><span class="eyebrow">Cómo funciona</span><h2>Reserva en 3 pasos</h2></div>
+    <ol class="steps">
+      @for (s of steps; track s.n) { <li class="step"><span class="num">{{ s.n }}</span><h3>{{ s.title }}</h3><p>{{ s.text }}</p></li> }
+    </ol>
+    <div class="center"><a routerLink="/reservar" class="btn btn--primary btn--lg">Empezar mi reserva</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="head"><span class="eyebrow">¿Por qué elegirnos?</span><h2>Tu mascota es parte de la familia</h2></div>
+    <ul class="features">
+      @for (f of features; track f.title) {
+        <li class="feat"><span class="icon"><app-icon [name]="f.icon" /></span><h3>{{ f.title }}</h3><p>{{ f.text }}</p></li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="head"><span class="eyebrow">Lo que dicen nuestros clientes</span><h2>Familias felices, mascotas felices</h2>
+      @if (reviewCount() > 0) { <p class="rating-sum"><app-star-rating [value]="average()" [readonly]="true" /> <strong>{{ average().toFixed(1) }}</strong> · {{ reviewCount() }} reseñas</p> }</div>
+    <ul class="reviews">
+      @for (r of reviews(); track r.id) {
+        <li class="review card"><app-star-rating [value]="r.rating" [readonly]="true" />
+          <p>“{{ r.comment }}”</p><footer><strong>{{ r.customerName }}</strong><small>{{ r.serviceName }}</small></footer></li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="container faq">
+    <div class="head left"><span class="eyebrow">Preguntas frecuentes</span><h2>¿Dudas? Te ayudamos</h2>
+      <p class="lead">Si no encuentras tu respuesta, escríbenos al {{ phone() }}.</p></div>
+    <div class="acc">
+      @for (f of faqs; track f.q) {
+        <details class="card"><summary>{{ f.q }}<app-icon name="chevron-down" /></summary><p>{{ f.a }}</p></details>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container band">
+    <h2>¿Listo para consentir a tu peludito?</h2>
+    <a routerLink="/reservar" class="btn btn--lg">Reservar cita</a>
+  </div>
+</section>

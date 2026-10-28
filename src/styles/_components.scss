@@ -1,0 +1,53 @@
+/* Botones */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 1.35rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; line-height: 1.2;
+  border: 1.5px solid transparent; border-radius: 999px;
+  background: var(--c-surface); color: var(--c-ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow); }
+  &:active:not(:disabled) { transform: translateY(0); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &--primary { background: var(--c-brand); color: #fff; &:hover:not(:disabled) { background: var(--c-brand-600); } }
+  &--outline { border-color: var(--c-line); background: transparent; &:hover:not(:disabled) { border-color: var(--c-ink-2); } }
+  &--ghost { background: transparent; &:hover:not(:disabled) { background: var(--c-brand-50); box-shadow: none; } }
+  &--whatsapp { background: #1fa855; color: #fff; &:hover:not(:disabled) { background: #178c46; } }
+  &--lg { padding: 0.9rem 1.8rem; font-size: 1rem; }
+  &--block { width: 100%; }
+}
+
+/* Tarjetas */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Formularios */
+.field { display: grid; gap: 0.35rem; margin-bottom: 1.1rem; }
+.field > label, .field > .label { font-size: 0.9rem; font-weight: 600; color: var(--c-ink-2); }
+.field .hint { font-weight: 400; color: var(--c-muted); }
+.input {
+  width: 100%; padding: 0.7rem 0.9rem;
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-line); border-radius: var(--radius-sm);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  &::placeholder { color: #98a2b3; }
+  &:hover { border-color: #cfccc6; }
+  &:focus { outline: none; border-color: var(--c-brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-brand) 18%, transparent); }
+  &.is-invalid { border-color: var(--c-danger); }
+}
+textarea.input { min-height: 110px; resize: vertical; }
+.error { color: var(--c-danger); font-size: 0.85rem; }
+
+/* Chips de estado */
+.badge {
+  display: inline-flex; align-items: center; padding: 0.15rem 0.65rem;
+  font-size: 0.75rem; font-weight: 600; border-radius: 999px; white-space: nowrap;
+  &--success { color: var(--c-success); background: var(--c-success-bg); }
+  &--info { color: var(--c-info); background: var(--c-info-bg); }
+  &--warn { color: var(--c-warn); background: var(--c-warn-bg); }
+  &--danger { color: var(--c-danger); background: var(--c-danger-bg); }
+}

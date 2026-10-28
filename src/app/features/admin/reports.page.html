@@ -1,0 +1,50 @@
+<header class="adm-head">
+  <div><h1>Reportes</h1><p>Resumen de {{ monthLabel() }}</p></div>
+  <div class="actions no-print">
+    <label class="f" style="display:inline-flex;align-items:center;gap:0.5rem">Mes <input type="month" class="input sel" [ngModel]="month()" (ngModelChange)="$event && month.set($event)"></label>
+    <button type="button" class="btn btn--outline" (click)="exportCsv()"><app-icon name="download" /> Exportar CSV</button>
+    <button type="button" class="btn btn--outline" (click)="print()"><app-icon name="file" /> Imprimir</button>
+  </div>
+</header>
+
+<section class="adm-kpis">
+  <article class="kpi green"><span class="ico"><app-icon name="chart" /></span><div><small>Ingresos cobrados</small><strong>S/ {{ stats().revenue }}</strong><em>{{ delta(stats().revenue, prev().revenue) }}</em></div></article>
+  <article class="kpi"><span class="ico"><app-icon name="calendar" /></span><div><small>Citas (sin canceladas)</small><strong>{{ stats().total }}</strong><em>{{ delta(stats().total, prev().total) }}</em></div></article>
+  <article class="kpi blue"><span class="ico"><app-icon name="check" /></span><div><small>Asistencia</small><strong>{{ stats().attendance === null ? '—' : stats().attendance + '%' }}</strong><em>{{ stats().attended }} atendidas · {{ stats().noShow }} no asistió</em></div></article>
+  <article class="kpi"><span class="ico"><app-icon name="alert" /></span><div><small>Por cobrar</small><strong>S/ {{ stats().receivable }}</strong><em>Atendidas sin pago</em></div></article>
+  <article class="kpi teal"><span class="ico"><app-icon name="users" /></span><div><small>Clientes nuevos</small><strong>{{ newClients() }}</strong><em>Ticket promedio S/ {{ stats().ticket }}</em></div></article>
+</section>
+
+<div class="adm-grid eq">
+  <section class="adm-card">
+    <div class="adm-card__head"><h2>Ingresos por servicio</h2></div>
+    @if (byService().length === 0) { <p class="adm-empty">Sin atenciones en este mes.</p> } @else {
+      <div class="hbars">@for (r of byService(); track r.name) { <div class="item"><div class="top"><span>{{ r.name }} <small class="muted">({{ r.count }})</small></span><strong>S/ {{ r.revenue }}</strong></div><div class="track"><div class="fill" [style.width.%]="r.pct"></div></div></div> }</div>
+    }
+  </section>
+  <section class="adm-card">
+    <div class="adm-card__head"><h2>Estado de las citas</h2></div>
+    <div class="adm-table-wrap"><table class="adm-table"><tbody>
+      <tr><td>Atendidas</td><td class="num"><strong>{{ stats().attended }}</strong></td></tr>
+      <tr><td>No asistió</td><td class="num"><strong>{{ stats().noShow }}</strong></td></tr>
+      <tr><td>Canceladas</td><td class="num"><strong>{{ stats().cancelled }}</strong></td></tr>
+      <tr><td>Mes anterior: citas / ingresos</td><td class="num">{{ prev().total }} / S/ {{ prev().revenue }}</td></tr>
+    </tbody></table></div>
+  </section>
+</div>
+
+<section class="adm-card" style="margin-top:1.1rem">
+  <div class="adm-card__head"><h2>Clientes que no regresan</h2>
+    <span class="no-print" style="display:inline-flex;gap:0.6rem;align-items:center">
+      <label class="f" style="display:inline-flex;align-items:center;gap:0.5rem">Sin venir hace más de
+        <select class="input sel" [ngModel]="inactiveDays()" (ngModelChange)="inactiveDays.set(+$event)"><option [ngValue]="45">45 días</option><option [ngValue]="60">60 días</option><option [ngValue]="90">90 días</option><option [ngValue]="120">120 días</option><option [ngValue]="180">180 días</option></select></label>
+      <button type="button" class="btn btn--outline btn--sm" (click)="exportInactive()"><app-icon name="download" /> CSV</button></span></div>
+  @if (inactive().length === 0) { <p class="adm-empty">Ningún cliente cumple ese criterio. 🎉</p> } @else {
+    <div class="adm-table-wrap"><table class="adm-table">
+      <thead><tr><th>Cliente</th><th>Mascotas</th><th>Última visita</th><th class="num">Días</th><th class="no-print"></th></tr></thead>
+      <tbody>@for (x of inactive(); track x.c.id) {
+        <tr><td><strong>{{ x.c.fullName }}</strong><small>{{ x.c.phone || x.c.email || 'Sin contacto' }}</small></td><td>{{ x.petNames || '—' }}</td><td class="nowrap">{{ fmtDate(x.last!) }}</td><td class="num">{{ x.days }}</td>
+          <td class="no-print">@if (x.c.phone) { <a class="btn btn--whatsapp btn--sm" [href]="reactivate(x)" target="_blank" rel="noopener"><app-icon name="whatsapp" /> Reactivar</a> }</td></tr>
+      }</tbody></table></div>
+  }
+</section>

@@ -1,0 +1,112 @@
+<section class="section">
+  <div class="container">
+    <header class="head">
+      <span class="eyebrow">Reserva en línea</span>
+      <h1>Agenda la cita de tu mascota</h1>
+    </header>
+
+    <div class="layout">
+      <div class="wizard card">
+        @if (confirmed(); as a) {
+          <div class="done" role="status">
+            <span class="done__icon"><app-icon name="check" /></span>
+            <h2>¡Reserva confirmada!</h2>
+            <p>Te esperamos en MR. SABUESO. Guarda tu código de cita.</p>
+            <dl class="summary card">
+              <dt>Código</dt><dd>{{ a.code }}</dd>
+              <dt>Mascota</dt><dd>{{ a.petName }}</dd>
+              <dt>Servicio</dt><dd>{{ a.serviceName }}</dd>
+              <dt>Fecha</dt><dd>{{ fmtDate(a.date) }} · {{ fmtTime(a.time) }}</dd>
+              <dt>Estado</dt><dd>Pendiente de confirmación</dd>
+            </dl>
+            <div class="actions">
+              <a class="btn btn--whatsapp" [href]="whatsappConfirm(a)" target="_blank" rel="noopener"><app-icon name="whatsapp" /> Avisar por WhatsApp</a>
+              <button type="button" class="btn btn--primary" (click)="openAccount()">Ver mis citas</button>
+              <button type="button" class="btn btn--outline" (click)="reset()">Reservar otra</button>
+            </div>
+          </div>
+        } @else {
+          <header class="steps">
+            <div class="steps__top"><strong>Paso {{ step() }} de 3</strong><span>{{ stepTitles[step() - 1] }}</span></div>
+            <div class="bar" role="progressbar" aria-valuemin="1" aria-valuemax="3" [attr.aria-valuenow]="step()" aria-label="Progreso de la reserva"><div class="bar__fill" [style.width.%]="progress()"></div></div>
+          </header>
+
+          @switch (step()) {
+            @case (1) {
+              <h2>¿Qué mascota visitará MR. SABUESO?</h2>
+              <p class="lead">Selecciona una de tus mascotas o registra a un nuevo pequeño.</p>
+              @if (true) {
+                <ul class="options" role="radiogroup" aria-label="Mascotas">
+                  @for (p of petsStore.pets(); track p.id) {
+                    <li><button type="button" role="radio" class="option" [class.selected]="petId() === p.id" [attr.aria-checked]="petId() === p.id" (click)="petId.set(p.id)">
+                      <span class="radio"></span>
+                      @if (p.photoUrl) { <img [src]="p.photoUrl" [alt]="'Foto de ' + p.name" width="48" height="48"> } @else { <span class="thumb"><app-icon name="paw" /></span> }
+                      <span class="txt"><strong>{{ p.name }} ({{ p.breed }})</strong><small>{{ speciesLabel(p.species) }} · {{ p.breed }}</small></span>
+                    </button></li>
+                  }
+                  <li><button type="button" class="option add" (click)="addPet()">
+                    <span class="thumb"><app-icon name="plus" /></span>
+                    <span class="txt"><strong>Agregar mascota</strong><small>Con alergias o condiciones médicas (opcional)</small></span>
+                  </button></li>
+                </ul>
+              }
+              <div class="actions"><button type="button" class="btn btn--primary btn--lg btn--block" [disabled]="!pet()" (click)="next()">Siguiente: elegir servicio</button></div>
+            }
+
+            @case (2) {
+              <h2>¿Qué servicio necesita {{ petName() }}?</h2>
+              <p class="lead">Selecciona el tipo de servicio que deseas agendar.</p>
+              <ul class="options" role="radiogroup" aria-label="Servicios">
+                @for (s of services(); track s.id) {
+                  <li><button type="button" role="radio" class="option" [class.selected]="serviceId() === s.id" [attr.aria-checked]="serviceId() === s.id" (click)="serviceId.set(s.id)">
+                    <span class="radio"></span><span class="thumb"><app-icon [name]="s.icon" /></span>
+                    <span class="txt"><strong>{{ s.name }}</strong><small>{{ s.summary }}</small></span>
+                    <span class="price">S/ {{ s.priceFrom }}</span>
+                  </button></li>
+                }
+              </ul>
+              <div class="actions split">
+                <button type="button" class="btn btn--outline btn--lg" (click)="back()">Atrás</button>
+                <button type="button" class="btn btn--primary btn--lg" [disabled]="!service()" (click)="next()">Siguiente: fecha y hora</button>
+              </div>
+            }
+
+            @case (3) {
+              <h2>Elige fecha y hora</h2>
+              <p class="lead">Selecciona el horario para tu visita a MR. SABUESO.</p>
+              <div class="field">
+                <label for="b-date">Fecha de la cita</label>
+                <input id="b-date" type="date" class="input" [min]="minDate" [max]="maxDate" [ngModel]="date()" (ngModelChange)="date.set($event)" [class.is-invalid]="!dateValid()">
+                @if (!dateValid()) { <span class="error">Elige una fecha desde hoy y hasta 90 días.</span> }
+              </div>
+              <p class="label">Horarios disponibles</p>
+              <app-slot-picker [date]="date()" [(time)]="time" />
+              <div class="field notes">
+                <label for="b-notes">Notas para la clínica <span class="hint">(opcional)</span></label>
+                <textarea id="b-notes" class="input" maxlength="300" placeholder="Ej. mi perrito se asusta con el secador" [ngModel]="notes()" (ngModelChange)="notes.set($event)"></textarea>
+              </div>
+              <div class="actions split">
+                <button type="button" class="btn btn--outline btn--lg" (click)="back()">Atrás</button>
+                <button type="button" class="btn btn--primary btn--lg" [disabled]="!canConfirm() || booking()" (click)="confirm()">{{ booking() ? 'Reservando…' : 'Confirmar reserva' }}</button>
+              </div>
+            }
+          }
+        }
+      </div>
+
+      <aside class="side card" aria-label="Resumen de tu reserva">
+        <h3>Resumen</h3>
+        <dl class="summary">
+          <dt>Mascota</dt><dd [class.empty]="!pet()">{{ petName() || 'Sin elegir' }}</dd>
+          <dt>Servicio</dt><dd [class.empty]="!service()">{{ service()?.name || 'Sin elegir' }}</dd>
+          <dt>Fecha</dt><dd>{{ dateValid() ? fmtDate(date()) : '—' }}</dd>
+          <dt>Hora</dt><dd [class.empty]="!time()">{{ time() ? fmtTime(time()!) : 'Sin elegir' }}</dd>
+          <dt>Estado inicial</dt><dd>Pendiente</dd>
+          <dt>Pago</dt><dd>En el local</dd>
+        </dl>
+        @if (service()?.priceFrom; as price) { <p class="total"><span>Desde</span> <strong>S/ {{ price }}</strong></p> }
+        <p class="note"><app-icon name="whatsapp" /> Recibirás un recordatorio por WhatsApp.</p>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,10 @@
+:host { display: block; }
+.back { display: inline-block; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600; color: var(--c-brand-600); &:hover { text-decoration: underline; } }
+.hero { display: flex; gap: 1.3rem; align-items: flex-start; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.pic { flex-shrink: 0; width: 88px; height: 88px; border-radius: 20px; object-fit: cover; &.ph { display: grid; place-items: center; color: var(--c-brand); background: var(--c-brand-50); --icon-size: 40px; } }
+.info { flex: 1; min-width: 240px; h1 { font-size: 1.6rem; } > p { color: var(--c-muted); }
+  dl { display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; margin: 0.9rem 0 0; } dt { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-muted); } dd { margin: 0; font-weight: 600; } dd small { display: block; font-weight: 400; color: var(--c-muted); }
+  .notes { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.9rem; padding: 0.55rem 0.8rem; font-size: 0.9rem; color: var(--c-warn); background: var(--c-warn-bg); border-radius: var(--radius-sm); } }
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; } .danger { color: var(--c-danger); }
+.timeline { display: grid; gap: 1.1rem; li { display: flex; gap: 0.9rem; align-items: flex-start; } .dot { flex-shrink: 0; width: 11px; height: 11px; margin-top: 0.5rem; background: var(--c-brand); border-radius: 50%; } .body { flex: 1; } .t { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; } .d { color: var(--c-ink-2); font-size: 0.93rem; } small { color: var(--c-muted); } }
+.foot { display: flex; justify-content: flex-end; gap: 0.7rem; margin-top: 0.6rem; }

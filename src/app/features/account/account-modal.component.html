@@ -1,0 +1,67 @@
+<app-modal heading="Mi cuenta" width="720px" (closed)="close()">
+  @if (auth.user(); as u) {
+    <div class="profile">
+      <div class="avatar" aria-hidden="true"><app-icon name="user" /></div>
+      <div class="who"><h3>{{ u.fullName }}</h3><p>{{ u.email }}</p></div>
+      <button type="button" class="btn btn--outline" (click)="logout()">Cerrar sesión</button>
+    </div>
+  }
+
+  <section aria-labelledby="pets-h">
+    <div class="head"><h3 id="pets-h">Mis mascotas registradas</h3>
+      <button type="button" class="link" (click)="ui.openAddPet()"><app-icon name="plus" /> Añadir mascota</button></div>
+
+    @if (petsStore.pets().length === 0) {
+      <p class="empty">Aún no registras mascotas. Añade la primera para poder reservar.</p>
+    } @else {
+      <ul class="grid">
+        @for (p of petsStore.pets(); track p.id) {
+          <li class="pet card">
+            @if (p.photoUrl) { <img [src]="p.photoUrl" [alt]="'Foto de ' + p.name" width="44" height="44"> }
+            @else { <span class="ph" aria-hidden="true"><app-icon name="paw" /></span> }
+            <div><strong>{{ p.name }}</strong><small>{{ speciesLabel(p.species) }} · {{ p.breed }}</small></div>
+            <button type="button" class="rec" (click)="ui.petRecordId.set(p.id)" [attr.aria-label]="'Ver historial y vacunas de ' + p.name"><app-icon name="file" /></button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <section aria-labelledby="hist-h">
+    <div class="head"><h3 id="hist-h">Historial de citas</h3><span class="total">Total: {{ total() }}</span></div>
+
+    @if (total() === 0) {
+      <p class="empty">Todavía no tienes citas.</p>
+    } @else {
+      <ul class="history">
+        @for (a of apptStore.mine(); track a.id) {
+          <li class="appt card">
+            <div class="top">
+              <strong>{{ a.serviceName }} <span class="code">{{ a.code }}</span></strong>
+              <span class="badges"><app-status-badge [status]="a.status" /><app-status-badge [payment]="a.payment" /></span>
+            </div>
+            <p class="meta">
+              <span><app-icon name="paw" /> {{ a.petName }}</span>
+              <span><app-icon name="calendar" /> {{ fmtDate(a.date) }} · {{ fmtTime(a.time) }}</span>
+            </p>
+
+            @if (isUpcoming(a)) {
+              <div class="cancel">
+                <button type="button" class="link" (click)="ui.rescheduleTarget.set(a)"><app-icon name="refresh" /> Reprogramar</button>
+                <button type="button" class="link danger-link" [disabled]="cancellingId() === a.id" (click)="cancel(a)">{{ cancellingId() === a.id ? 'Cancelando…' : 'Cancelar cita' }}</button>
+              </div>
+            } @else if (a.status === 'attended') {
+              <div class="cancel">
+                @if (reviewOf(a); as r) {
+                  <span class="rated">Tu calificación: <app-star-rating [value]="r.rating" [readonly]="true" /></span>
+                } @else {
+                  <button type="button" class="link" (click)="ui.reviewTarget.set(a)"><app-icon name="star" /> Calificar atención</button>
+                }
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</app-modal>

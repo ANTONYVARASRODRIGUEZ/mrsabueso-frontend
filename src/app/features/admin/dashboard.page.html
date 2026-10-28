@@ -1,0 +1,87 @@
+<header class="adm-head">
+  <div><h1>Resumen</h1><p>{{ fmtDate(today) }} · Visión general de la clínica</p></div>
+  <div class="actions"><a routerLink="/admin/citas" class="btn btn--primary"><app-icon name="plus" /> Nueva cita</a></div>
+</header>
+
+<section class="adm-kpis" aria-label="Indicadores">
+  <article class="kpi"><span class="ico"><app-icon name="calendar" /></span><div><small>Citas de hoy</small><strong>{{ todayList().length }}</strong><em>{{ pendingUpcoming() }} por confirmar</em></div></article>
+  <article class="kpi green"><span class="ico"><app-icon name="chart" /></span><div><small>Ingresos del mes</small><strong>S/ {{ monthRevenue() }}</strong><em>Por cobrar: S/ {{ pendingPayments() }}</em></div></article>
+  <article class="kpi teal"><span class="ico"><app-icon name="users" /></span><div><small>Clientes</small><strong>{{ clientCount() }}</strong><em>{{ petCount() }} mascotas</em></div></article>
+  <article class="kpi blue"><span class="ico"><app-icon name="check" /></span><div><small>Asistencia (30 días)</small><strong>{{ attendance() === null ? '—' : attendance() + '%' }}</strong><em>Atendidas vs. no asistió</em></div></article>
+  <article class="kpi"><span class="ico"><app-icon name="star" /></span><div><small>Calificación promedio</small><strong>{{ avgRating() ? avgRating().toFixed(1) : '—' }}</strong><em><app-star-rating [value]="avgRating()" [readonly]="true" /></em></div></article>
+</section>
+
+<div class="adm-grid two">
+  <div class="adm-stack">
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Citas de los últimos 14 días</h2></div>
+      <div class="chart" role="img" aria-label="Gráfico de citas por día">
+        @for (c of last14(); track $index) { <div class="col"><span class="bar" [style.height.%]="c.h"></span><span class="v">{{ c.value }}</span><span class="l">{{ c.label }}</span></div> }
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Agenda de hoy</h2><a routerLink="/admin/agenda">Ver agenda</a></div>
+      @if (todayList().length === 0) { <p class="adm-empty">No hay citas programadas para hoy.</p> } @else {
+        <ul class="adm-list">
+          @for (a of todayList(); track a.id) {
+            <li><span class="time">{{ fmtTime(a.time) }}</span>
+              <div class="grow"><strong>{{ a.petName }}</strong> · {{ a.serviceName }}<small>{{ a.customerName }}</small></div>
+              <app-status-badge [status]="a.status" />
+              <span class="row-actions">
+                @if (a.status === 'pending') { <button type="button" class="btn btn--outline btn--sm" (click)="setStatus(a.id, 'confirmed')">Confirmar</button> }
+                @if (a.status === 'pending' || a.status === 'confirmed') {
+                  <button type="button" class="btn btn--primary btn--sm" (click)="setStatus(a.id, 'attended')">Atendida</button>
+                  <button type="button" class="btn btn--outline btn--sm" (click)="setStatus(a.id, 'no_show')">No asistió</button>
+                }
+              </span></li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <div class="adm-stack">
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Ingresos últimos 6 meses</h2></div>
+      <div class="chart" role="img" aria-label="Gráfico de ingresos por mes">
+        @for (c of revenue6(); track $index) { <div class="col"><span class="bar alt" [style.height.%]="c.h"></span><span class="v">S/{{ c.value }}</span><span class="l">{{ c.label }}</span></div> }
+      </div>
+    </section>
+
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Servicios más solicitados</h2></div>
+      @if (topServices().length === 0) { <p class="adm-empty">Sin datos todavía.</p> } @else {
+        <div class="hbars">@for (s of topServices(); track s.name) { <div class="item"><div class="top"><span>{{ s.name }}</span><strong>{{ s.value }}</strong></div><div class="track"><div class="fill" [style.width.%]="s.pct"></div></div></div> }</div>
+      }
+    </section>
+
+    <section class="adm-card">
+      <div class="adm-card__head"><h2>Vacunas por vencer</h2><a routerLink="/admin/mascotas">Ver mascotas</a></div>
+      @if (dueVaccines().length === 0) { <p class="adm-empty">Todo al día. 🎉</p> } @else {
+        <ul class="adm-list">
+          @for (x of dueVaccines(); track x.v.id) {
+            <li><app-icon name="alert" /><div class="grow"><strong>{{ x.pet!.name }}</strong> · {{ x.v.vaccine }}<small>Próxima dosis: {{ fmtDate(x.v.nextDue!) }}</small></div>
+              <span class="badge" [class]="'badge ' + (x.status === 'overdue' ? 'badge--danger' : 'badge--warn')">{{ x.status === 'overdue' ? 'Vencida' : 'Por vencer' }}</span>
+              <a [routerLink]="['/admin/mascotas', x.v.petId]" class="icon-btn" aria-label="Abrir ficha"><app-icon name="arrow-right" /></a></li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+</div>
+
+<div class="adm-grid eq" style="margin-top: 1.1rem">
+  <section class="adm-card">
+    <div class="adm-card__head"><h2>Mensajes nuevos</h2><a routerLink="/admin/mensajes">Ver bandeja</a></div>
+    @if (newMessages().length === 0) { <p class="adm-empty">No hay mensajes nuevos.</p> } @else {
+      <ul class="adm-list">@for (m of newMessages(); track m.id) { <li><app-icon name="message" /><div class="grow"><strong>{{ m.fullName }}</strong><small>{{ m.message }}</small></div></li> }</ul>
+    }
+  </section>
+  <section class="adm-card">
+    <div class="adm-card__head"><h2>Últimas reseñas</h2><a routerLink="/admin/resenas">Ver reseñas</a></div>
+    @if (latestReviews().length === 0) { <p class="adm-empty">Sin reseñas todavía.</p> } @else {
+      <ul class="adm-list">@for (r of latestReviews(); track r.id) { <li><div class="grow"><app-star-rating [value]="r.rating" [readonly]="true" /> <strong>{{ r.customerName }}</strong><small>{{ r.comment }}</small></div></li> }</ul>
+    }
+  </section>
+</div>

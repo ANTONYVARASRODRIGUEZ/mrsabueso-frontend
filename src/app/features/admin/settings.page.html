@@ -1,0 +1,62 @@
+<header class="adm-head"><div><h1>Configuración</h1><p>Datos del negocio, horarios y feriados. Los cambios se reflejan en todo el sitio.</p></div>
+  <div class="actions"><button type="button" class="btn btn--primary" (click)="save()"><app-icon name="check" /> Guardar cambios</button></div></header>
+
+<form [formGroup]="form" (ngSubmit)="save()" novalidate class="adm-stack">
+  <section class="adm-card">
+    <h2>Datos del negocio</h2>
+    <div class="form-grid">
+      <div class="field"><label for="c-name">Nombre</label><input id="c-name" class="input" formControlName="name" [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid"></div>
+      <div class="field"><label for="c-tag">Subtítulo</label><input id="c-tag" class="input" formControlName="tagline"></div>
+      <div class="field"><label for="c-phone">Teléfono (como se muestra)</label><input id="c-phone" class="input" formControlName="phone" placeholder="+51 923 399 129"></div>
+      <div class="field"><label for="c-wa">WhatsApp (solo dígitos con código de país)</label><input id="c-wa" class="input" formControlName="whatsapp" placeholder="51923399129" [class.is-invalid]="form.controls.whatsapp.touched && form.controls.whatsapp.invalid">
+        @if (form.controls.whatsapp.touched && form.controls.whatsapp.invalid) { <span class="error">Entre 8 y 15 dígitos, sin espacios ni símbolos.</span> }</div>
+      <div class="field"><label for="c-mail">Correo de contacto</label><input id="c-mail" type="email" class="input" formControlName="email" placeholder="contacto@tuveterinaria.pe"></div>
+      <div class="field"><label for="c-fb">Facebook</label><input id="c-fb" class="input" formControlName="facebook"></div>
+      <div class="field full"><label for="c-addr">Dirección real del local</label><input id="c-addr" class="input" formControlName="address" placeholder="Av. / Calle, número, distrito, ciudad"></div>
+      <div class="field full"><label for="c-maps">Enlace de Google Maps <span class="hint">(opcional)</span></label><input id="c-maps" class="input" formControlName="mapsUrl" placeholder="https://maps.google.com/…" [class.is-invalid]="form.controls.mapsUrl.touched && form.controls.mapsUrl.invalid"></div>
+    </div>
+  </section>
+
+  <section class="adm-card">
+    <h2>Horario de atención</h2>
+    <div class="adm-table-wrap"><table class="adm-table">
+      <thead><tr><th>Día</th><th>Atiende</th><th>Abre</th><th>Cierra</th></tr></thead>
+      <tbody>@for (d of order; track d) {
+        <tr [formGroup]="hourGroup(d)"><td><strong>{{ dayNames[d] }}</strong></td>
+          <td><label class="switch"><input type="checkbox" formControlName="open" [attr.aria-label]="'Atiende ' + dayNames[d]"> {{ hourGroup(d).value.open ? 'Abierto' : 'Cerrado' }}</label></td>
+          <td><input type="time" class="input sel" formControlName="from" [attr.aria-label]="'Apertura ' + dayNames[d]"></td>
+          <td><input type="time" class="input sel" formControlName="to" [attr.aria-label]="'Cierre ' + dayNames[d]"></td></tr>
+      }</tbody></table></div>
+  </section>
+
+  <section class="adm-card">
+    <h2>Mensajes de recordatorio (WhatsApp)</h2>
+    <p class="muted" style="margin-bottom:0.8rem">Variables: <code>{{ '{cliente}' }}</code> <code>{{ '{mascota}' }}</code> <code>{{ '{servicio}' }}</code> <code>{{ '{fecha}' }}</code> <code>{{ '{hora}' }}</code> <code>{{ '{vacuna}' }}</code> <code>{{ '{estado}' }}</code> <code>{{ '{negocio}' }}</code></p>
+    <div class="field"><label for="t-appt">Recordatorio de cita</label><textarea id="t-appt" class="input" formControlName="apptReminderTemplate"></textarea></div>
+    <div class="field"><label for="t-vac">Aviso de vacuna</label><textarea id="t-vac" class="input" formControlName="vaccineReminderTemplate"></textarea></div>
+  </section>
+
+  <div class="adm-grid eq">
+    <section class="adm-card">
+      <h2>Horarios de cita</h2>
+      <p class="muted" style="margin-bottom:0.8rem">Horas de inicio que se ofrecen al reservar (solo se muestran las que caen dentro del horario de atención del día).</p>
+      <div class="chips">@for (s of slots(); track s) { <span class="chip">{{ fmtTime(s) }}<button type="button" (click)="removeSlot(s)" [attr.aria-label]="'Quitar ' + s"><app-icon name="x" /></button></span> }</div>
+      <div class="adder"><input type="time" class="input" aria-label="Nuevo horario" [value]="newSlot()" (input)="newSlot.set($any($event.target).value)"><button type="button" class="btn btn--outline" (click)="addSlot()">Agregar horario</button></div>
+    </section>
+    <section class="adm-card">
+      <h2>Días cerrados (feriados, vacaciones)</h2>
+      <p class="muted" style="margin-bottom:0.8rem">En estas fechas no se podrán reservar citas.</p>
+      <div class="chips">@for (d of closedDates(); track d) { <span class="chip">{{ fmtDate(d) }}<button type="button" (click)="removeClosed(d)" [attr.aria-label]="'Quitar ' + d"><app-icon name="x" /></button></span> }
+        @if (closedDates().length === 0) { <span class="muted">Ninguno</span> }</div>
+      <div class="adder"><input type="date" class="input" aria-label="Nueva fecha cerrada" [min]="today" [value]="newClosed()" (input)="newClosed.set($any($event.target).value)"><button type="button" class="btn btn--outline" (click)="addClosed()">Agregar fecha</button></div>
+    </section>
+  </div>
+
+  <section class="adm-card">
+    <h2>Datos y copias de seguridad</h2>
+    <p class="muted" style="margin-bottom:1rem">La información se guarda en el servidor. Puedes descargar una copia completa en JSON (sin contraseñas).</p>
+    <div class="actions" style="display:flex;gap:0.7rem;flex-wrap:wrap">
+      <button type="button" class="btn btn--outline" (click)="backup()"><app-icon name="download" /> Descargar copia (JSON)</button>
+    </div>
+  </section>
+</form>

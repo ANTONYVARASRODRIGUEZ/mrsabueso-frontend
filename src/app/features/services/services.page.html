@@ -1,0 +1,39 @@
+<section class="section">
+  <div class="container">
+    <header class="head">
+      <span class="eyebrow">Nuestros servicios</span>
+      <h1>Servicios de veterinaria &amp; spa</h1>
+      <p class="lead">Elige el cuidado ideal para tu mascota. Todos nuestros servicios se pueden reservar en línea.</p>
+    </header>
+
+    <ul class="grid">
+      @for (s of services(); track s.id) {
+        <li [id]="s.id" class="item" [class.active]="selectedId() === s.id">
+          <button type="button" class="circle" (click)="toggle(s.id)" [attr.aria-expanded]="selectedId() === s.id" [attr.aria-label]="'Ver detalle de ' + s.name">
+            <app-photo [src]="s.image" [alt]="s.name" ratio="1 / 1" [icon]="s.icon" />
+          </button>
+          <h2>{{ s.name }}</h2>
+          <p>{{ s.summary }}</p>
+          <button type="button" class="more" (click)="toggle(s.id)">{{ selectedId() === s.id ? 'Ocultar detalle' : 'Ver detalle' }} →</button>
+        </li>
+      }
+    </ul>
+
+    @if (selected(); as s) {
+      <article class="detail card" aria-live="polite">
+        <app-photo class="detail__img" [src]="s.image" [alt]="s.name" ratio="4 / 3" [icon]="s.icon" />
+        <div class="detail__body">
+          <h2>{{ s.name }}</h2>
+          <p class="lead">{{ s.description }}</p>
+          <ul class="includes">@for (i of s.includes; track i) { <li><app-icon name="check" /> {{ i }}</li> }</ul>
+          @if (s.priceFrom) { <p class="price">Desde <strong>S/ {{ s.priceFrom }}</strong></p> }
+          <div class="actions">
+            @if (s.bookable) { <a routerLink="/reservar" [queryParams]="{ servicio: s.id }" class="btn btn--primary">Reservar este servicio</a> }
+            @else { <a routerLink="/contacto" class="btn btn--primary">Consultar disponibilidad</a> }
+            <button type="button" class="btn btn--outline" (click)="selectedId.set(null)">Cerrar</button>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+</section>

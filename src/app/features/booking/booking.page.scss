@@ -1,0 +1,37 @@
+.head { margin-bottom: 2rem; text-align: center; h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); } }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1.5rem; align-items: start; max-width: 1000px; margin-inline: auto; }
+.wizard { padding: 1.8rem; box-shadow: var(--shadow); h2 { font-size: 1.5rem; } .lead { margin: 0.4rem 0 1.3rem; font-size: 1rem; } }
+
+.steps { margin-bottom: 1.6rem; }
+.steps__top { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--c-muted); strong { color: var(--c-ink); font-family: var(--font-display); } }
+.bar { height: 8px; background: #efede8; border-radius: 999px; overflow: hidden; &__fill { height: 100%; background: var(--c-brand); border-radius: 999px; transition: width 0.3s ease; } }
+
+.options { display: grid; gap: 0.7rem; }
+.option { width: 100%; display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; text-align: left; background: #fff; border: 1.5px solid var(--c-line); border-radius: var(--radius); transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  &:hover { border-color: #d3cfc8; } &.selected { border-color: var(--c-brand); background: var(--c-brand-50); box-shadow: 0 0 0 3px var(--c-brand-100); }
+  &.add { border-style: dashed; &:hover { border-color: var(--c-brand); } } }
+.radio { flex-shrink: 0; width: 20px; height: 20px; border: 2px solid #c9c5bd; border-radius: 50%; position: relative; .selected & { border-color: var(--c-brand); &::after { content: ''; position: absolute; inset: 3px; background: var(--c-brand); border-radius: 50%; } } }
+.thumb, img { flex-shrink: 0; width: 48px; height: 48px; border-radius: 12px; object-fit: cover; }
+.thumb { display: grid; place-items: center; color: var(--c-brand-600); background: var(--c-brand-50); --icon-size: 24px; }
+.txt { flex: 1; display: grid; line-height: 1.3; strong { font-family: var(--font-display); font-weight: 600; font-size: 1rem; } small { color: var(--c-muted); } }
+.price { font: 600 0.95rem var(--font-display); color: var(--c-brand-600); white-space: nowrap; }
+
+.field { margin-bottom: 1.2rem; }
+.label { margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--c-ink-2); }
+.notes { margin-top: 1rem; textarea { min-height: 80px; } }
+.actions { display: grid; gap: 0.7rem; margin-top: 1.6rem; &.split { grid-template-columns: 1fr 2fr; } }
+.skeleton { height: 72px; margin-bottom: 0.7rem; border-radius: var(--radius); background: linear-gradient(90deg, #efede8 25%, #f7f5f1 50%, #efede8 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
+@keyframes sh { to { background-position: -200% 0; } }
+
+.side { position: sticky; top: calc(var(--header-h) + 1rem); padding: 1.4rem; h3 { margin-bottom: 1rem; font-size: 1.1rem; } }
+.summary { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; margin: 0; font-size: 0.93rem; dt { color: var(--c-muted); } dd { margin: 0; text-align: right; font-weight: 500; &.empty { color: #98a2b3; font-weight: 400; } } }
+.total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--c-line); strong { font: 700 1.4rem var(--font-display); color: var(--c-brand-600); } }
+.note { display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem; font-size: 0.85rem; color: var(--c-ink-2); app-icon { color: #1fa855; } }
+
+.done { display: grid; justify-items: center; gap: 0.6rem; text-align: center; p { color: var(--c-ink-2); }
+  &__icon { display: grid; place-items: center; width: 68px; height: 68px; color: #fff; background: var(--c-success); border-radius: 50%; --icon-size: 34px; }
+  .summary { width: 100%; max-width: 380px; margin: 0.6rem 0; padding: 1rem 1.2rem; text-align: left; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; } }
+
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .side { position: static; order: -1; } }
+@media (max-width: 480px) { .slots { grid-template-columns: repeat(2, 1fr); } .actions.split { grid-template-columns: 1fr; } .wizard { padding: 1.2rem; } }
